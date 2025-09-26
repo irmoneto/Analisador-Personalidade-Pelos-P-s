@@ -1,0 +1,1 @@
+# Analisador-Personalidade-Pelos-P-s
