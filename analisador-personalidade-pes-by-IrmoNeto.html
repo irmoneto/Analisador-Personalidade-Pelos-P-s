@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://raw.githubusercontent.com; media-src 'self' blob:;">
+  <title>Analisador dos Formatos e Tamanhos dos Dedos dos Pés - By Irmo Zuccato Neto</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    /* Esconde todos os containers por padrão */
+    #app-header-container, .result-container, .step-container { 
+        display: none;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        position: absolute;
+        width: 100%;
+    }
+    .active-block { 
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+        position: relative;
+    }
+    .step-container.hiding {
+        opacity: 0;
+        transform: translateY(-20px);
+        pointer-events: none;
+    }
+    .custom-cursor { cursor: crosshair; }
+    .bg-animation {
+      background-color: #e0f2fe;
+      background-image: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+    }
+    .result-perfect { color: #ca8a04; }
+    .result-very-close { color: #eab308; }
+    .result-close { color: #f97316; }
+    .result-far { color: #ef4444; }
+
+    .progress-bar-perfect { background-color: #ca8a04; }
+    .progress-bar-very-close { background-color: #eab308; }
+    .progress-bar-close { background-color: #f97316; }
+    .progress-bar-far { background-color: #ef4444; }
+    
+    /* Estilo para o Loading Spinner */
+    .loading-spinner {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top: 4px solid #fff;
+        width: 1.5rem;
+        height: 1.5rem;
+        animation: spin 1s linear infinite;
+        margin-left: 0.5rem;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+
+    /* Estilo CSS para o botão com formato de seta */
+    .arrow-button {
+        position: relative;
+        padding-right: 3rem; /* Espaço para a seta */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+    .arrow-button::after {
+        content: '';
+        position: absolute;
+        right: 0.5rem;
+        width: 0;
+        height: 0;
+        border-top: 0.5rem solid transparent;
+        border-bottom: 0.5rem solid transparent;
+        border-left: 0.5rem solid white; /* Cor da seta */
+        transition: transform 0.2s;
+    }
+    .arrow-button:hover::after {
+        transform: translateX(0.25rem); /* Movimento da seta no hover */
+    }
+    /* Adiciona transição suave para a animação de altura */
+    .block-transition {
+        transition: height 0.5s ease-in-out;
+        overflow: hidden;
+        position: relative;
+        min-height: 400px; /* Garante espaço para a transição */
+    }
+    #app-main-content {
+        position: relative;
+    }
+
+    #capture-flash {
+        transition: opacity 0.1s ease-out;
+    }
+
+    /* Estilos para Impressão e PDF */
+    @media print {
+        body, html {
+            background-color: white;
+        }
+        body * {
+            visibility: hidden;
+        }
+        #final-report-block, #final-report-block * {
+            visibility: visible;
+        }
+        #final-report-image {
+            visibility: visible !important; /* Garante que a imagem seja impressa */
+        }
+        #final-report-block {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            border: none;
+            box-shadow: none;
+            margin: 0;
+            padding: 0;
+        }
+        /* Esconde os botões na impressão */
+        #final-report-block .action-buttons {
+            display: none;
+        }
+    }
+
+    /* Estilo para a notificação de cópia */
+    #copy-notification {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #2f3640;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+        pointer-events: none;
+        transform: translate(-50%, 20px);
+    }
+    #copy-notification.show {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+</style>
+</head>
+<body class="bg-animation min-h-screen p-4 sm:p-8 text-gray-800 flex items-center justify-center">
+
+  <div id="app-main-content" class="max-w-4xl w-full mx-auto block-transition">
+    <!-- Título/Header (Será escondido após o splash screen) -->
+    <div id="app-header-container">
+        <header class="text-center mb-6 sm:mb-10">
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-2">Analisador dos Formatos e Tamanhos dos Dedos dos Pés</h1>
+          <p class="text-base sm:text-xl text-gray-600">By IRMO ZUCCATO NETO</p>
+        </header>
+    </div>
+
+    <!-- Tela Inicial -->
+    <div id="splash-screen" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-2 border-dashed border-gray-300 text-center transition-all duration-300 active-block">
+      
+      <!-- LOGO ADICIONADO AQUI -->
+      <img src="https://raw.githubusercontent.com/irmoneto/Analisador-Personalidade-Pelos-P-s/main/IMAGENS%20APP/LOGO.jpg" alt="Logo do Irmo Zuccato Neto" class="mx-auto mb-6 rounded-full shadow-lg" style="max-width: 150px; height: auto;">
+      
+      <h2 class="text-xl sm:text-2xl font-bold mb-4">Analisador dos Formatos e Tamanhos dos Dedos dos Pés</h2>
+      <p class="text-lg sm:text-xl text-gray-700 mb-8">VAMOS DESCOBRIR QUAL O FORMATO DOS SEUS PÉS E O TAMANHO DOS SEUS DEDOS!!!!</p>
+      <button id="start-button" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:from-blue-600 hover:to-blue-700 cursor-pointer transition-transform duration-200 transform hover:scale-105">
+        Começar
+      </button>
+      <!-- NOVO: Link para Termos Legais (Splash Screen) -->
+      <p class="text-xs text-gray-500 mt-4">
+        Ao continuar, você concorda com os <a href="#" id="open-terms-splash" class="text-blue-600 hover:text-blue-800 underline font-medium">Termos de Uso e Política de Privacidade</a>.
+      </p>
+    </div>
+
+    <!-- Bloco de Personalização (Novo Bloco) -->
+    <div id="personalization-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-2 border-dashed border-gray-300 text-center transition-all duration-300 step-container">
+        <h2 class="text-xl sm:text-2xl font-semibold mb-6">👋 Olá! Vamos começar.</h2>
+        
+        <div class="mb-6 text-left">
+            <label for="user-name-input" class="block text-gray-700 font-semibold mb-2">Qual é o seu nome?</label>
+            <input type="text" id="user-name-input" placeholder="Seu nome" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+        </div>
+
+        <div class="mb-6 text-left">
+            <label class="block text-gray-700 font-semibold mb-2">Para quem é a análise?</label>
+            <select id="analysis-target-select" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                <option value="me" selected>Para mim</option>
+                <option value="client">Para um(a) cliente</option>
+            </select>
+        </div>
+
+        <div id="client-name-group" class="mb-8 text-left step-container">
+            <label for="client-name-input" class="block text-gray-700 font-semibold mb-2">Nome do(a) Cliente:</label>
+            <input type="text" id="client-name-input" placeholder="Nome do Cliente" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+        </div>
+
+        <button id="continue-to-upload" class="bg-teal-500 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-teal-600 cursor-pointer transition-transform duration-200 transform hover:scale-105">
+          Prosseguir para o Upload
+        </button>
+        <p id="personalization-error" class="text-red-500 text-sm mt-4 hidden">Por favor, preencha todos os nomes necessários.</p>
+        <!-- NOVO: Link para Termos Legais (Personalization Block) -->
+        <p class="text-xs text-gray-500 mt-6">
+            Leia os <a href="#" id="open-terms-personalization" class="text-blue-600 hover:text-blue-800 underline font-medium">Termos Legais</a> completos antes de continuar.
+        </p>
+    </div>
+    
+    <!-- Bloco de Upload (Agora é a tela de escolha) -->
+    <div id="upload-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-2 border-dashed border-gray-300 text-center transition-all duration-300 step-container">
+        <h2 class="text-xl sm:text-2xl font-semibold mb-4">Adicione uma foto do pé de <span id="target-name-display" class="text-blue-600"></span></h2>
+        <p class="text-gray-500 mb-6">A foto deve ser clara, de boa qualidade, tirada de cima e de frente, como no exemplo abaixo:</p>
+        <img src="https://raw.githubusercontent.com/irmoneto/Analisador-Personalidade-Pelos-P-s/main/IMAGENS%20APP/EXEMPLO%2002.PNG" alt="Exemplo de foto para upload" class="mx-auto rounded-lg shadow-md mb-6 w-full max-w-sm h-auto">
+        
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <!-- NOVO MÉTODO PARA "TIRAR FOTO" (Input File com Capture) -->
+            <!-- Adicionamos a classe 'mobile-only' para esconder este botão no desktop via JS -->
+            <label for="native-camera-input" id="open-camera-button-label" class="bg-blue-500 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-blue-600 transition-colors cursor-pointer inline-flex items-center justify-center mobile-only">
+                📸 Tirar Foto (Câmera Nativa)
+                <!-- Input oculto que abre a câmera nativa (prioridade para a traseira) -->
+                <input type="file" id="native-camera-input" accept="image/*" class="hidden" capture="environment">
+            </label>
+            
+            <label for="image-upload" class="bg-teal-500 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-teal-600 cursor-pointer transition-colors inline-flex items-center justify-center">
+                📁 Fazer Upload
+                <input type="file" id="image-upload" accept="image/*" class="hidden">
+            </label>
+        </div>
+        <!-- Nova mensagem de orientação condicional para desktop -->
+        <p id="camera-error" class="text-red-500 text-sm mt-4 hidden">Se você está no computador, use o botão "Fazer Upload" para selecionar a imagem.</p>
+    </div>
+
+    <!-- Bloco da Câmera (AGORA DESATIVADO NO FLUXO DE BOTÃO 'TIRAR FOTO') -->
+    <div id="camera-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg text-center transition-all duration-300 step-container">
+        <p class="text-gray-500 mb-4">Posicione o pé no centro da câmera e tire a foto.</p>
+        <div class="relative bg-black rounded-lg overflow-hidden w-full max-w-md mx-auto aspect-video">
+            <!-- Mantemos o VIDEO para fins de código, mas ele não será ativado pelo botão 'Tirar Foto' -->
+            <video id="camera-preview" class="w-full h-full" autoplay playsinline muted></video>
+            <div id="capture-flash" class="absolute inset-0 bg-white opacity-0 pointer-events-none"></div>
+        </div>
+        <div class="mt-4 flex justify-center items-center gap-4">
+            <button id="capture-button" class="w-16 h-16 bg-white rounded-full border-4 border-gray-300 flex items-center justify-center shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Tirar Foto">
+                <svg class="w-8 h-8 text-gray-700" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm4 4a2 2 0 104 0 2 2 0 00-4 0z"></path></svg>
+            </button>
+            <button id="switch-camera-button" class="p-3 bg-gray-200 rounded-full hidden" aria-label="Trocar Câmera">
+                <svg class="w-6 h-6 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5"/></svg>
+            </button>
+        </div>
+        <button id="cancel-camera-button" class="mt-4 text-gray-600 hover:text-gray-800">Voltar</button>
+    </div>
+
+    <!-- Bloco de Confirmação da Foto Capturada (Usado pelo Input Nativo) -->
+    <div id="preview-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg text-center transition-all duration-300 step-container">
+        <h2 class="text-xl sm:text-2xl font-semibold mb-4">Confirme a Foto</h2>
+        <!-- O JS deve usar esta pré-visualização, mas o preview-block agora apenas move a foto para medição -->
+        <img id="photo-preview" src="" alt="Foto capturada" class="mx-auto rounded-lg shadow-md mb-6 w-full max-w-md h-auto" style="transition: transform 0.3s ease;">
+        <div class="flex flex-col gap-4">
+            <div class="flex justify-center gap-4">
+                <button id="rotate-left-button" class="bg-blue-500 text-white py-3 px-6 rounded-full font-bold shadow-lg hover:bg-blue-600 transition-colors">🔄 Girar para a Esquerda</button>
+                <button id="rotate-right-button" class="bg-blue-500 text-white py-3 px-6 rounded-full font-bold shadow-lg hover:bg-blue-600 transition-colors">🔄 Girar para a Direita</button>
+            </div>
+            <div class="flex justify-center gap-4">
+                <!-- Se o usuário clicar em "Tirar Outra" aqui, ele dispara o input nativo novamente -->
+                <button id="retake-photo-button" class="bg-gray-500 text-white py-3 px-6 rounded-full font-bold shadow-lg hover:bg-gray-600 transition-colors">Tirar Outra</button>
+                <button id="use-photo-button" class="bg-teal-500 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-teal-600 transition-colors">Usar Foto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Instruções do Formato do Pé (Novo Bloco) -->
+    <div id="shape-instruction-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-2 border-dashed border-blue-300 text-center transition-all duration-300 step-container">
+        <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Instruções para a Análise do Formato</h2>
+        <p class="text-gray-600 mb-6">Observe a imagem abaixo para entender onde as marcações das pontas dos dedos devem ser feitas.</p>
+        <img src="https://raw.githubusercontent.com/irmoneto/Analisador-Personalidade-Pelos-P-s/main/IMAGENS%20APP/EXEMPLO%20F%20P%C3%89S.PNG" alt="Exemplo de marcação para formato do pé" class="mx-auto rounded-lg shadow-md mb-8 w-full max-w-md h-auto border-2 border-gray-200">
+        <button id="continue-to-shape-measurement" class="bg-blue-600 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-blue-700 cursor-pointer transition-transform duration-200 transform hover:scale-105">
+          Continuar
+        </button>
+    </div>
+    <!-- Tela de Instruções da Razão Áurea (Etapa 2) -->
+    <div id="ratio-instruction-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-2 border-dashed border-yellow-300 text-center transition-all duration-300 step-container">
+      <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Instruções para a Análise do Tamanho dos Dedos</h2>
+      <p class="text-gray-600 mb-4">Você precisará fazer TRÊS marcações na imagem do pé:</p>
+      
+      <div class="text-left bg-yellow-50 p-4 rounded-lg mb-6 border-l-4 border-yellow-400">
+        <ol class="list-decimal pl-5 space-y-3">
+          <li><strong>Ponta do 2º dedo</strong> (dedo ao lado do dedão)</li>
+          <li><strong>Base do 2º dedo</strong> (onde o dedo começa no pé)</li>
+          <li><strong>Final do peito do pé</strong> (parte mais saliente antes do tornozelo)</li>
+        </ol>
+      </div>
+
+      <img src="https://raw.githubusercontent.com/irmoneto/Analisador-Personalidade-Pelos-P-s/main/IMAGENS%20APP/EXEMPLO%20T%20DEDOS.jpeg" alt="Exemplo de marcação para tamanho dos dedos" class="mx-auto rounded-lg shadow-md mb-8 w-full max-w-md h-auto border-2 border-gray-200">
+      
+      <div class="bg-blue-50 p-4 rounded-lg mb-6 border-l-4 border-blue-400">
+        <p class="font-semibold text-blue-800">Dica:</p>
+        <p class="text-blue-700">Aponte e clique exatamente nos locais indicados acima. Você verá números aparecerem nas marcações.</p>
+      </div>
+
+      <button id="continue-to-ratio-measurement" class="bg-red-700 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-red-800 cursor-pointer transition-transform duration-200 transform hover:scale-105">
+        Entendi, Continuar
+      </button>
+    </div>
+<!-- Medição (Comum para ambas as fases) -->
+    <div id="measurement-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg transition-all duration-300 step-container">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+        <h2 class="text-xl font-semibold text-gray-800 mb-2 sm:mb-0">Marque os Pontos</h2>
+        <button id="redo-button" class="flex items-center gap-2 bg-gray-200 text-gray-700 py-2 px-4 rounded-full font-medium hover:bg-gray-300 transition-colors text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M21.5 2v6h-6"/><path d="M2.5 22v-6h6"/><path d="M2.5 16a10 10 0 0 1 18.5-4 10.38 10.38 0 0 1 1.35 2.1l-1.72-1.71"/><path d="M21.5 8a10 10 0 0 1-18.5 4 10.38 10.38 0 0 1 1.35-2.1l1.72 1.71"/></svg>
+            Refazer Marcações
+        </button>
+      </div>
+      <p id="instruction" class="bg-blue-100 border-l-4 border-blue-500 text-blue-800 p-4 mb-4 rounded-md font-medium"></p>
+      <div class="relative bg-gray-50 rounded-lg overflow-hidden border-2 border-gray-300">
+        <canvas id="imageCanvas" class="w-full h-auto custom-cursor"></canvas>
+      </div>
+      <div id="progress-container" class="mt-4 grid grid-cols-4 gap-2"></div>
+      <button id="calculate-button" class="mt-4 w-full bg-blue-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-600 transition-colors hidden">Calcular</button>
+    </div>
+    
+    <!-- Resultado Formato -->
+    <div id="shape-result-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-2 border-blue-300 transition-all duration-300 result-container">
+      <div class="flex flex-col gap-6">
+        <!-- Primeira linha: Imagem e resultado -->
+        <div class="flex flex-col sm:flex-row gap-8">
+          <div class="flex-1">
+            <img id="shape-result-image" src="" alt="Foto do Pé" class="rounded-lg shadow-md mb-4 w-full h-auto">
+          </div>
+          <div class="flex-1 text-center">
+            <h2 class="text-xl sm:text-2xl font-bold mb-2">Resultado do Formato do Pé</h2>
+            <div class="text-5xl font-extrabold mb-4" id="shape-emoji"></div>
+            <img id="shape-image" class="hidden mx-auto mb-4" src="" alt="Representação do formato do pé" style="width: 200px; height: auto;">
+            <div class="text-xl font-semibold mb-6" id="shape-text"></div>
+            <p id="classification-reasoning" class="text-sm text-gray-600 mt-2"></p>
+          </div>
+        </div>
+        
+        <!-- Segunda linha: Quadro de medições à esquerda e botão à direita -->
+        <div class="flex flex-col sm:flex-row gap-4 items-stretch mt-6">
+          <div class="flex-1 flex flex-col items-center p-4 rounded-lg bg-gray-50 border border-gray-200">
+              <h3 class="text-base font-semibold text-gray-700 mb-2">Medições dos Dedos (em pixels)</h3>
+              <p class="text-sm text-gray-600 mb-1">Dedão (L1): <span id="L1-value" class="font-bold text-gray-800"></span></p>
+              <p class="text-sm text-gray-600 mb-1">Segundo Dedo (L2): <span id="L2-value" class="font-bold text-gray-800"></span></p>
+              <p class="text-sm text-gray-600 mb-1">Terceiro Dedo (L3): <span id="L3-value" class="font-bold text-gray-800"></span></p>
+              <p class="text-sm text-gray-600">Quinto Dedo (L5): <span id="L5-value" class="font-bold text-gray-800"></span></p>
+          </div>
+          <div class="flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-gray-50 border border-gray-200">
+              <p class="text-4xl font-extrabold text-red-700 mb-4 animate-pulse">Próximo Passo:</p>
+              <button id="analyze-ratio-button" class="w-full bg-red-700 text-white py-4 px-8 rounded-lg font-bold text-lg hover:bg-red-800 transition-colors transform hover:scale-105">
+                  Analisar Tamanho dos Dedos
+              </button>
+          </div>
+        </div>
+        
+        <!-- Terceira linha: Botão refazer centralizado -->
+        <div class="w-full flex justify-center">
+          <button id="back-to-shape-measurement-button" class="w-full sm:w-1/2 bg-gray-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
+              Refazer Marcações
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloco de Resultado da Análise do Tamanho dos Dedos -->
+    <div id="ratio-result-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-2 border-yellow-300 transition-all duration-300 result-container">
+      <div class="flex flex-col sm:flex-row gap-8">
+        <div class="flex-1">
+          <img id="ratio-result-image" src="" alt="Foto do Pé com medições da Análise do Tamanho dos Dedos" class="rounded-lg shadow-md mb-4 w-full h-auto">
+        </div>
+        <div class="flex-1">
+          <div class="text-center">
+            <h2 class="text-xl sm:text-2xl font-bold mb-2">Resultado da Análise do Tamanho dos Dedos</h2>
+            <div id="ratio-result-ratio" class="text-5xl font-extrabold result-perfect mb-4"></div>
+            <div id="ratio-result-text" class="text-xl font-semibold mb-6"></div>
+          </div>
+          <div class="space-y-4 text-lg">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Razão Calculada:</span>
+              <span id="ratio-calculated-ratio" class="font-bold"></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Medida do 2º Dedo (pixels):</span>
+              <span id="ratio-toe-length" class="font-bold"></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Medida do Peito do Pé (pixels):</span>
+              <span id="ratio-foot-length" class="font-bold"></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Análise do Tamanho dos Dedos Ideal:</span>
+              <span class="font-bold text-yellow-600">1.618</span>
+            </div>
+          </div>
+          <div class="mt-8">
+            <p class="text-center text-sm text-gray-500 mb-2">Proximidade com a Razão Ideal</p>
+            <div class="relative w-full h-3 bg-gray-200 rounded-full">
+                <div id="ratio-progress-bar" class="absolute h-3 rounded-full transition-all duration-500"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-4 mt-4">
+        <button id="back-to-ratio-measurement-button" class="flex-1 bg-gray-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-600 transition-colors">Refazer Marcações</button>
+        <button id="new-ratio-analysis-button" class="flex-1 bg-red-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-red-700 transition-colors">Análise das Unhas</button>
+      </div>
+    </div>
+    
+    <!-- Pergunta sobre Unhas -->
+    <div id="nails-question-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-2 border-orange-300 transition-all duration-300 step-container">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-6 text-center">Análise das Unhas dos Pés</h2>
+        
+        <div class="flex flex-col sm:flex-row gap-8 items-center mb-8">
+            <div class="flex-1">
+                <img id="nails-result-image" src="" alt="Foto do Pé para análise de unhas" class="rounded-lg shadow-xl w-full h-auto border-4 border-gray-200">
+            </div>
+            <div class="flex-1">
+                <img src="https://raw.githubusercontent.com/irmoneto/Analisador-Personalidade-Pelos-P-s/main/IMAGENS%20APP/TAMANHO%20UNHAS.png" alt="Exemplo de tamanho de unhas" class="rounded-lg shadow-xl w-full h-auto border-4 border-gray-200">
+            </div>
+        </div>
+
+        <div class="text-center">
+            <p class="text-xl font-semibold mb-4">A maioria das suas unhas dos pés são:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                <label class="flex flex-col items-center p-4 rounded-lg bg-gray-50 border border-gray-200 cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="nails-visibility" value="pouco-visiveis" class="mb-2">
+                    <span class="font-medium">POUCO VISÍVEIS</span>
+                </label>
+                <label class="flex flex-col items-center p-4 rounded-lg bg-gray-50 border border-gray-200 cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="nails-visibility" value="visiveis" class="mb-2">
+                    <span class="font-medium">VISÍVEIS</span>
+                </label>
+                <label class="flex flex-col items-center p-4 rounded-lg bg-gray-50 border border-gray-200 cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="nails-visibility" value="bem-visiveis" class="mb-2">
+                    <span class="font-medium">BEM VISÍVEIS</span>
+                </label>
+            </div>
+            
+            <p id="nails-error" class="text-red-500 text-sm mt-4 hidden">Por favor, selecione uma opção para prosseguir.</p>
+
+            <button id="continue-to-personal-questions" class="bg-purple-600 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-purple-700 transition-colors">
+                Próximas Perguntas
+            </button>
+        </div>
+    </div>
+    <!-- Questionário Pessoal Otimizado -->
+    <div id="personal-questions-block" class="bg-white p-6 sm:p-10 rounded-xl shadow-lg border-2 border-purple-200 transition-all duration-300 step-container max-w-3xl mx-auto">
+        <div class="text-center mb-8">
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Perguntas Complementares</h2>
+            <p class="text-gray-600">Responda para completar sua análise</p>
+            <div class="w-full bg-gray-200 rounded-full h-2 mt-4">
+                <div class="bg-purple-500 h-2 rounded-full" style="width: 75%"></div>
+            </div>
+        </div>
+
+        <form id="personal-questions-form" class="space-y-6">
+            <!-- Pergunta 1 -->
+            <div class="bg-purple-50 rounded-xl p-6">
+                <div class="flex items-center mb-3">
+                    <span class="bg-purple-600 text-white font-bold rounded-full w-6 h-6 flex items-center justify-center mr-3">1</span>
+                    <label class="text-lg font-semibold text-gray-800">Você tem cócegas nos pés?</label>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                    <label class="flex items-center justify-center p-3 bg-white rounded-lg border border-gray-200 hover:border-purple-400 transition-colors cursor-pointer">
+                        <input type="radio" name="question1" value="Sim" class="sr-only">
+                        <span class="font-medium">Sim</span>
+                    </label>
+                    <label class="flex items-center justify-center p-3 bg-white rounded-lg border border-gray-200 hover:border-purple-400 transition-colors cursor-pointer">
+                        <input type="radio" name="question1" value="Não" class="sr-only">
+                        <span class="font-medium">Não</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Pergunta 2 -->
+            <div class="bg-purple-50 rounded-xl p-6">
+                <div class="flex items-center mb-3">
+                    <span class="bg-purple-600 text-white font-bold rounded-full w-6 h-6 flex items-center justify-center mr-3">2</span>
+                    <label class="text-lg font-semibold text-gray-800">Qual sua relação com os pés?</label>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                    <label class="flex flex-col items-center p-4 bg-white rounded-lg border border-gray-200 hover:border-purple-400 transition-colors cursor-pointer text-center">
+                        <input type="radio" name="question2" value="Desconfortável" class="sr-only">
+                        <span class="font-medium mb-1">Desconfortável</span>
+                        <span class="text-xs text-gray-500">Inseguro com meus pés</span>
+                    </label>
+                    <label class="flex flex-col items-center p-4 bg-white rounded-lg border border-gray-200 hover:border-purple-400 transition-colors cursor-pointer text-center">
+                        <input type="radio" name="question2" value="Neutro" class="sr-only">
+                        <span class="font-medium mb-1">Neutro</span>
+                        <span class="text-xs text-gray-500">Indiferente</span>
+                    </label>
+                    <label class="flex flex-col items-center p-4 bg-white rounded-lg border border-gray-200 hover:border-purple-400 transition-colors cursor-pointer text-center">
+                        <input type="radio" name="question2" value="Confortável" class="sr-only">
+                        <span class="font-medium mb-1">Confortável</span>
+                        <span class="text-xs text-gray-500">À vontade</span>
+                    </label>
+                    <label class="flex flex-col items-center p-4 bg-white rounded-lg border border-gray-200 hover:border-purple-400 transition-colors cursor-pointer text-center">
+                        <input type="radio" name="question2" value="Muito Confortável" class="sr-only">
+                        <span class="font-medium mb-1">Muito Confortável</span>
+                        <span class="text-xs text-gray-500">Totalmente natural</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <button type="button" id="generate-final-report-button" class="bg-gradient-to-r from-purple-600 to-purple-700 text-white py-4 px-10 rounded-xl font-bold shadow-lg hover:from-purple-700 hover:to-purple-800 cursor-pointer transition-all duration-300 transform hover:scale-[1.02] inline-flex items-center">
+                    <span id="button-text">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                        </svg>
+                        Gerar Relatório Final
+                    </span>
+                    <span id="loading-spinner" class="hidden loading-spinner"></span>
+                </button>
+                <p id="questions-error" class="text-red-500 text-sm mt-3 hidden">Por favor, responda todas as perguntas.</p>
+            </div>
+        </form>
+    </div>
+<!-- Relatório Completo de Análise -->
+<div id="final-report-block" class="bg-white p-8 sm:p-12 rounded-xl shadow-lg border-2 border-green-300 transition-all duration-300 step-container">
+    
+    <!-- Título -->
+    <div class="text-center mb-10 pb-6 border-b border-gray-200">
+        <h2 class="text-2xl sm:text-3xl font-bold text-teal-700 mb-3">Relatório da ANÁLISE DOS PÉS - By @IrmoNeto</h2>
+        <p class="text-xl text-gray-700">Para: <span id="report-target-name" class="font-bold text-teal-600"></span></p>
+    </div>
+
+    <!-- Container Superior: Resumo e Foto -->
+    <div id="report-summary-container" class="flex flex-col sm:flex-row gap-8 items-start mb-10">
+        <!-- Container Esquerdo: Resultados Iniciais -->
+        <div class="flex-1 w-full bg-gray-50 p-6 rounded-lg border border-gray-200">
+            <h3 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Resumo da Análise</h3>
+            <ul class="space-y-3 text-gray-700 mt-4">
+                <li class="flex justify-between"><strong>Formato do Pé:</strong> <span id="summary-shape" class="font-semibold text-right"></span></li>
+                <li class="flex justify-between"><strong>Tamanho dos Dedos:</strong> <span id="summary-ratio" class="font-semibold text-right"></span></li>
+                <li class="flex justify-between"><strong>Tamanho das Unhas:</strong> <span id="summary-nails" class="font-semibold text-right"></span></li> 
+                <li class="flex justify-between"><strong>Cócegas nos Pés:</strong> <span id="summary-tickles" class="font-semibold text-right"></span></li> 
+                <li class="flex justify-between"><strong>Relação com os Pés:</strong> <span id="summary-relation" class="font-semibold text-right"></span></li>
+            </ul>
+        </div>
+        
+        <!-- Container Direito: Foto -->
+        <div class="w-full sm:w-1/3 flex justify-center items-center">
+            <img id="final-report-image" src="" alt="Foto do Pé para Relatório" class="rounded-lg shadow-xl max-w-full h-auto border-4 border-gray-200">
+        </div>
+    </div>
+
+    <!-- Container Inferior: Análise de Personalidade -->
+    <div>
+        <h3 class="text-2xl font-extrabold text-gray-800 mb-4 text-center">Relatório de Análise da Personalidade pelos Pés</h3>
+        <!-- O texto do relatório gerado será inserido aqui -->
+        <div id="expert-analysis-result" class="prose max-w-none text-gray-800 leading-relaxed bg-gray-50 p-6 rounded-lg border-l-4 border-green-400">
+            Aguardando os dados para gerar o relatório...
+        </div>
+    </div>
+
+    <!-- Botões de Ação Final -->
+    <div class="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4 action-buttons">
+        <button id="save-analysis-button" class="bg-green-600 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-green-700 transition-colors w-full sm:w-auto">
+            Salvar Relatório
+        </button>
+        <button id="share-analysis-button" class="bg-teal-600 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-teal-700 transition-colors w-full sm:w-auto">
+            Compartilhar Análise
+        </button>
+        <button id="start-new-full-analysis-button" class="bg-blue-600 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-blue-700 transition-colors w-full sm:w-auto">
+            Realizar Nova Análise
+        </button>
+    </div>
+</div>
+
+<!-- NOVO BLOCO: DOCUMENTOS LEGAIS COMPLETOS -->
+<div id="legal-documents-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-2 border-red-300 transition-all duration-300 step-container max-w-3xl mx-auto">
+    <div class="text-center mb-6">
+        <h2 class="text-2xl sm:text-3xl font-bold text-red-700 mb-2">Termos Legais do Aplicativo</h2>
+        <p class="text-gray-600">Última atualização: Outubro de 2025</p>
+    </div>
+
+    <div class="space-y-8 text-gray-700 text-sm">
+        
+        <!-- TERMOS DE USO -->
+        <div id="terms-of-use" class="border-b pb-4">
+            <h3 class="text-xl font-bold text-gray-800 mb-3">1. TERMOS DE USO</h3>
+            <p class="font-semibold mb-2">1.1. Direitos Autorais e Propriedade Intelectual</p>
+            <p class="ml-4 mb-2">Todo o código, design, metodologia de análise e conteúdo textual (incluindo o Relatório Final) são de propriedade exclusiva do desenvolvedor, **Irmo Zuccato Neto**. A propriedade intelectual é protegida por leis de direitos autorais.</p>
+            
+            <p class="font-semibold mb-2">1.2. Limitações de Uso e Proibições</p>
+            <ul class="list-disc list-inside ml-4 space-y-1">
+                <li>O uso do aplicativo destina-se exclusivamente à análise pessoal ou de cliente, conforme as funcionalidades oferecidas.</li>
+                <li>É estritamente **proibida** a reprodução, cópia, modificação, engenharia reversa, distribuição ou revenda do código ou da metodologia subjacente.</li>
+                <li>A reprodução total ou parcial do Relatório Final para fins comerciais (venda, publicação em massa) sem autorização expressa do desenvolvedor é proibida.</li>
+            </ul>
+        </div>
+        
+        <!-- POLÍTICA DE PRIVACIDADE -->
+        <div id="privacy-policy" class="border-b pb-4">
+            <h3 class="text-xl font-bold text-gray-800 mb-3">2. POLÍTICA DE PRIVACIDADE</h3>
+            <p class="font-semibold mb-2">2.1. Coleta e Uso de Dados</p>
+            <p class="ml-4 mb-2">Coletamos apenas o **nome** do usuário e/ou cliente para fins de personalização do relatório. Estes nomes são exibidos no Relatório Final gerado, mas não são armazenados em um banco de dados persistente neste momento.</p>
+            
+            <p class="font-semibold mb-2">2.2. Armazenamento e Uso de Imagens</p>
+            <p class="ml-4 mb-2">A **imagem do pé** é usada unicamente para a realização das medições visuais no dispositivo do usuário (navegador) e para inclusão no Relatório Final (PDF/Visualização). A imagem **não é enviada, armazenada ou compartilhada** com o desenvolvedor ou terceiros, sendo descartada após o encerramento da sessão ou início de nova análise.</p>
+            
+            <p class="font-semibold mb-2">2.3. Cookies e Rastreamento (Tracking)</p>
+            <p class="ml-4">O aplicativo **não utiliza cookies** de rastreamento de terceiros (tracking) ou ferramentas de analytics que coletam dados pessoais. O uso do Tailwind CSS e HTML2PDF é baseado em CDNs de terceiros, mas sem coleta de dados específica do usuário por este aplicativo.</p>
+        </div>
+
+        <!-- LICENÇA DE SOFTWARE -->
+        <div id="software-license" class="border-b pb-4">
+            <h3 class="text-xl font-bold text-gray-800 mb-3">3. LICENÇA DE USO (USUÁRIO FINAL)</h3>
+            <p class="font-semibold mb-2">3.1. Permissões Concedidas</p>
+            <p class="ml-4 mb-2">É concedida ao usuário uma licença limitada, não exclusiva e intransferível para usar este software para fins pessoais ou profissionais de análise (clientes), conforme a proposta original.</p>
+            
+            <p class="font-semibold mb-2">3.2. Restrições e Penalidades</p>
+            <p class="ml-4">A violação das limitações de uso e das proibições de reprodução (item 1) pode resultar em penalidades legais, incluindo, mas não se limitando a, ações por violação de direitos autorais e danos morais, conforme a legislação brasileira e internacional aplicável.</p>
+        </div>
+
+        <!-- AVISOS LEGAIS -->
+        <div id="legal-disclaimers">
+            <h3 class="text-xl font-bold text-gray-800 mb-3">4. AVISOS LEGAIS E LIMITAÇÃO DE RESPONSABILIDADE</h3>
+            <p class="font-semibold mb-2">4.1. Disclaimer Médico</p>
+            <p class="ml-4 mb-2 bg-yellow-100 p-2 rounded">**O Aplicativo não oferece diagnóstico médico, psicológico, quiroprático ou podológico.** A análise é baseada em estudos de leitura de pés com finalidade de autoconhecimento e desenvolvimento pessoal. Use o Relatório Final apenas como uma ferramenta complementar e não substitua a avaliação de um profissional de saúde qualificado.</p>
+            
+            <p class="font-semibold mb-2">4.2. Limitação de Responsabilidade</p>
+            <p class="ml-4 mb-2">O desenvolvedor não se responsabiliza por quaisquer danos diretos ou indiretos decorrentes do uso (ou mau uso) da análise e das informações geradas por este aplicativo.</p>
+            
+            <p class="font-semibold mb-2">4.3. Jurisdição Aplicável</p>
+            <p class="ml-4">Estes Termos e o uso do aplicativo são regidos pelas leis da República Federativa do Brasil.</p>
+        </div>
+    </div>
+    
+    <div class="mt-8 text-center">
+        <button id="back-from-legal-button" class="bg-red-500 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-red-600 transition-colors">
+            Voltar ao Aplicativo
+        </button>
+    </div>
+</div>
+
+  </div>
+
+  <div id="copy-notification">Relatório copiado para a área de transferência!</div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // --- ELEMENTOS HTML ---
+      const appMainContent = document.getElementById('app-main-content');
+      const splashScreen = document.getElementById('splash-screen');
+      const personalizationBlock = document.getElementById('personalization-block');
+      const uploadBlock = document.getElementById('upload-block');
+      const measurementBlock = document.getElementById('measurement-block');
+      const shapeInstructionBlock = document.getElementById('shape-instruction-block');
+      const ratioInstructionBlock = document.getElementById('ratio-instruction-block');
+      const shapeResultBlock = document.getElementById('shape-result-block');
+      const ratioResultBlock = document.getElementById('ratio-result-block');
+      const nailsQuestionBlock = document.getElementById('nails-question-block');
+      const personalQuestionsBlock = document.getElementById('personal-questions-block');
+      const finalReportBlock = document.getElementById('final-report-block');
+      const appHeaderContainer = document.getElementById('app-header-container');
+      const previewBlock = document.getElementById('preview-block');
+      const cameraBlock = document.getElementById('camera-block');
+      const legalDocumentsBlock = document.getElementById('legal-documents-block');
+
+
+      // --- BOTÕES E FORMS ---
+      const startButton = document.getElementById('start-button');
+      const continueToUploadButton = document.getElementById('continue-to-upload');
+      const analyzeRatioButton = document.getElementById('analyze-ratio-button');
+      const newRatioAnalysisButton = document.getElementById('new-ratio-analysis-button');
+      const continueToPersonalQuestions = document.getElementById('continue-to-personal-questions');
+      const generateFinalReportButton = document.getElementById('generate-final-report-button');
+      const backToShapeMeasurementButton = document.getElementById('back-to-shape-measurement-button');
+      const backToRatioMeasurementButton = document.getElementById('back-to-ratio-measurement-button');
+      const startNewFullAnalysisButton = document.getElementById('start-new-full-analysis-button');
+      const imageUpload = document.getElementById('image-upload');
+      const redoButton = document.getElementById('redo-button');
+      const calculateButton = document.getElementById('calculate-button');
+      // Novo input para a câmera nativa
+      const nativeCameraInput = document.getElementById('native-camera-input');
+      const openCameraButtonLabel = document.getElementById('open-camera-button-label');
+      
+      const nailsError = document.getElementById('nails-error');
+      const questionsError = document.getElementById('questions-error');
+      const personalQuestionsForm = document.getElementById('personal-questions-form');
+
+      // Referências para o loading e texto do botão
+      const loadingSpinner = document.getElementById('loading-spinner');
+      const buttonTextSpan = document.getElementById('button-text');
+      const expertAnalysisResult = document.getElementById('expert-analysis-result');
+      
+      const continueToShapeMeasurement = document.getElementById('continue-to-shape-measurement');
+      const continueToRatioMeasurement = document.getElementById('continue-to-ratio-measurement');
+
+
+      const canvas = document.getElementById('imageCanvas');
+      const ctx = canvas.getContext('2d');
+      const goldenRatioIdeal = 1.618;
+
+      // --- Variáveis de Estado ---
+      let points = [];
+      let currentStep = 1;
+      let img = new Image();
+      let imageUrl = '';
+      let currentAnalysisPhase = 'shape';
+      let userName = '';
+      let clientName = '';
+      let shapeResultText = '';
+      let ratioResultText = '';
+      let personalAnswers = {};
+      let currentStream = null;
+      let facingMode = 'environment';
+      let currentRotation = 0;
+      let previousBlockId = 'splash-screen'; // Rastreia o bloco anterior para o botão "Voltar"
+
+      // --- Elementos da Câmera ---
+      // const openCameraButton = document.getElementById('open-camera-button'); // DESATIVADO NO FLUXO NATIVO
+      const cameraPreview = document.getElementById('camera-preview');
+      const captureButton = document.getElementById('capture-button');
+      const switchCameraButton = document.getElementById('switch-camera-button');
+      const cancelCameraButton = document.getElementById('cancel-camera-button');
+      const cameraError = document.getElementById('camera-error');
+      const photoPreview = document.getElementById('photo-preview');
+      const retakePhotoButton = document.getElementById('retake-photo-button');
+      const usePhotoButton = document.getElementById('use-photo-button');
+      const captureFlash = document.getElementById('capture-flash');
+      const rotateLeftButton = document.getElementById('rotate-left-button');
+      const rotateRightButton = document.getElementById('rotate-right-button');
+      const backFromLegalButton = document.getElementById('back-from-legal-button');
+
+
+      const shapeStepLabels = ['Ponta do Hálux', 'Ponta do 2º Dedo', 'Ponta do 3º Dedo', 'Ponta do 5º Dedo'];
+      const ratioStepLabels = ['Ponta do 2º Dedo', 'Início do 2º Dedo', 'Fim do Peito do Pé'];
+      
+      const analysisData = {
+          'Formato do Pé': {
+              'Egípcio': 'uma pessoa prática e objetiva com predomínio do pensamento linear, que tem tendência ao perfeccionismo, busca clareza e sequência lógica nas ações, valorizando a ordem e a previsibilidade.',
+              'Grego/Romano': 'uma pessoa com predomínio do pensamento sistêmico, que tende à criação de esquemas e planos, apresentando detalhismo e uma necessidade de compreender a totalidade antes de agir.',
+              'Quadrado': 'uma pessoa com predomínio do pensamento digital, que gosta de integrar tudo a tudo e com tudo, mostrando uma tendência ao utopismo e à busca por coerência total entre as partes.'
+          },
+          'Tamanho dos Dedos': {
+              'Curtos': 'pessoas diretas, objetivas e práticas que agem rapidamente diante das demandas, com foco em resultados imediatos. Elas preferem o concreto ao abstrato, valorizam a eficiência e a clareza, e costumam ser resolutivas, mas podem ter impaciência com processos demorados, tendendo a se expressar com firmeza.',
+              'Normais para Curtos': 'uma personalidade que combina praticidade e sensibilidade, apresentando características de dedos curtos, como a ação direta, e de dedos normais, como o equilíbrio e a ponderação. Busca resultados sem perder o vínculo com o outro, agindo com agilidade mas considerando o impacto emocional das decisões.',
+              'Normais': 'um equilíbrio entre ação, emoção e reflexão, em pessoas que conseguem pensar, sentir e agir de forma proporcional, adaptando-se bem à realidade. São flexíveis, ponderadas e coerentes, unindo objetividade e sensibilidade.',
+              'Normais para Longos': 'uma personalidade com predominância emocional e mental, que reúne características de dedos normais, como equilíbrio, e de longos, como reflexão profunda. São pessoas que pensam e sentem com intensidade, buscando significado nas experiências e combinando empatia com visão analítica.',
+              'Longos': 'pessoas reflexivas, analíticas e detalhistas que tendem à introspecção e à imaginação. Elas valorizam a compreensão antes da ação, preferindo o abstrato ao imediato, e demonstram sensibilidade emocional e profundidade intelectual, mas precisam cuidar para não se prenderem na idealização.'
+          },
+          'Pontos Fortes': {
+              'Curtos': 'agilidade para agir e resolver situações práticas, espírito objetivo, direto e assertivo, capacidade de simplificar o complexo e transformar ideias em ações concretas, além de tomada de decisão rápida e senso de oportunidade.',
+              'Normais para Curtos': 'equilíbrio entre ação e emoção, sabendo agir com sensibilidade e objetividade. Tem capacidade de resolver sem perder a empatia, conciliando agilidade prática com percepção relacional e se adaptando bem a contextos dinâmicos.',
+              'Normais': 'harmonia entre pensar, sentir e agir, com flexibilidade cognitiva e emocional. Sabe avaliar, decidir e executar com equilíbrio, ponderando razão e intuição, o que a torna uma pessoa versátil e integradora.',
+              'Normais para Longos': 'sensibilidade emocional aliada à reflexão profunda, com capacidade de compreender nuances e agir com empatia e discernimento. Possui clareza de visão, vocação para análise e inspiração, integrando sentimento e racionalidade com elegância.',
+              'Longos': 'pensamento analítico, mente investigativa e imaginativa, com alta capacidade de abstração e visão estratégica. Busca sentido e profundidade em tudo que faz, com talento para síntese, reflexão e inovação.'
+          },
+          'Pontos Desafiadores': {
+              'Curtos': 'a impaciência diante de processos lentos, a tendência a agir antes de refletir e a dificuldade em lidar com emoções mais sutis. Pode resistir à escuta ou à espera, buscando resolver rapidamente o que pede presença e sensibilidade.',
+              'Normais para Curtos': 'a oscilação entre impulso e ponderação, pois em momentos de pressão tende à impaciência. Corre o risco de agir com boa intenção, porém sem planejamento, e precisa desenvolver maior tolerância à frustração.',
+              'Normais': 'a tendência à indecisão diante de múltiplas perspectivas, podendo demorar para agir em busca do equilíbrio. Corre o risco de racionalizar excessivamente os sentimentos e precisa definir limites claros, confiando mais na intuição.',
+              'Normais para Longos': 'a sensibilidade acentuada, que pode gerar sobrecarga emocional e fazê-la absorver excessivamente o ambiente. Pode se dispersar em análises ou idealizações, adiando a ação prática e precisando estruturar o pensamento.',
+              'Longos': 'o excesso de reflexão que pode levar à paralisia na ação e a dificuldade em lidar com imprevistos. A tendência à autocrítica e idealização pode desconectá-la do corpo e do presente, necessitando aprender a agir com mais confiança.'
+          },
+          'Tamanho das Unhas': {
+              'Pouco Visível': 'pessoas que acreditam mais nas verdades externas e buscam segurança em referências do meio, demonstrando sensibilidade ao julgamento alheio. Podem apresentar rigidez cognitiva e resistência a mudanças, com necessidade de aprovação e tendência ao conformismo.',
+              'Visível': 'um equilíbrio entre convicção pessoal e abertura para o novo. São pessoas capazes de sustentar suas ideias sem ignorar perspectivas externas, demonstrando flexibilidade, senso crítico e capacidade de ajustar crenças, mantendo harmonia entre firmeza e escuta.',
+              'Bem Visível': 'pessoas que acreditam mais nas próprias verdades e agem com autoconfiança e firmeza, demonstrando independência intelectual. Adaptam-se bem às transformações sociais, mas podem expressar teimosia e resistência em reconhecer falhas, precisando cuidar para não confundir convicção com inflexibilidade.'
+          },
+          'Cócegas nos Pés': {
+              'Sim': 'um sistema nervoso altamente responsivo e uma ligação com memórias corporais primárias, revelando emocionalidade viva e receptividade afetiva. Essa resposta sugere abertura ao contato, mas também possível vulnerabilidade, podendo refletir registros antigos de ansiedade ou excitação ligados ao toque.',
+              'Não': 'um sistema nervoso mais estável e previsível, com menor reatividade a estímulos sutis, o que revela estrutura emocional consistente e autoconfiança. A ausência de cócegas sugere integração entre instinto e consciência, embora possa, em certos contextos, refletir uma necessidade de manter distanciamento protetivo.'
+          },
+          'Relação com os Pés': {
+              'Desconfortável': 'o desconforto diante dos pés expressa uma relação de distanciamento com aspectos instintivos, sensuais e afetivos do próprio corpo. Essa reação indica possíveis registros de repressão do prazer ou vergonha corporal, refletindo resistência em aceitar o que é natural e dificuldade em se entregar plenamente às sensações.',
+              'Neutro': 'a relação neutra ou ambivalente com os pés demonstra um estado de transição entre repressão e aceitação. Há curiosidade e desejo de aproximação, mas ainda coexistem julgamentos sutis ou receio do prazer, refletindo um processo de reconciliação entre instinto e consciência.',
+              'Confortável': 'o conforto com os pés revela uma relação harmônica entre corpo, prazer e presença, indicando aceitação dos impulsos naturais e abertura ao toque como linguagem de afeto. Há integração entre sensualidade e segurança emocional, refletindo maturidade na vivência do prazer.'
+          }
+      };
+
+      // FUNÇÃO AUXILIAR: GARANTE QUE AS IMAGENS ESTEJAM CARREGADAS
+      function ensureImagesLoaded(element) {
+          const images = element.querySelectorAll('img');
+          const promises = Array.from(images).filter(img => img.src && !img.complete).map(img => {
+              return new Promise(resolve => {
+                  img.onload = resolve;
+                  img.onerror = resolve; 
+              });
+          });
+          return Promise.all(promises);
+      }
+
+      function escapeHTML(str) {
+        return str.replace(/[&<>"']/g, function(match) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[match];
+        });
+      }
+
+      function generateFinalReportText(shape, ratio, nailsValue, tickles, relation) {
+          const clientName = escapeHTML(document.getElementById('report-target-name').textContent);
+          const nailsKeyMap = {'pouco-visiveis': 'Pouco Visível', 'visiveis': 'Visível', 'bem-visiveis': 'Bem Visível'};
+          const nailsKey = nailsKeyMap[nailsValue] || 'Visível';
+          let relationKey = relation === 'Muito Confortável' ? 'Confortável' : relation;
+          let ratioKey = ratio === 'Normais (Análise do Tamanho dos Dedos)' ? 'Normais' : ratio;
+          const relationDisplay = relationKey === 'Neutro' ? 'Neutra' : relationKey;
+          const shapeDesc = analysisData['Formato do Pé'][shape] || '';
+          const ratioDesc = analysisData['Tamanho dos Dedos'][ratioKey] || '';
+          const nailsDesc = analysisData['Tamanho das Unhas'][nailsKey] || '';
+          const ticklesDesc = analysisData['Cócegas nos Pés'][tickles] || '';
+          const relationDesc = analysisData['Relação com os Pés'][relationKey] || '';
+          const strongPointsDesc = analysisData['Pontos Fortes'][ratioKey] || '';
+          const challengingPointsDesc = analysisData['Pontos Desafiadores'][ratioKey] || '';
+
+          let report = `<p class="mb-6"><strong>${clientName}</strong>, seus pés revelam muito sobre como você pensa, sente e age no mundo. Enquanto a mente racionaliza, os pés simplesmente mostram a verdade. Vamos juntos entender essa linguagem silenciosa?</p>`;
+          report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Formato do Pé</h4><p class="mt-3">Seu formato de pé <strong>${shape}</strong> traz a primeira pista sobre sua estrutura de pensamento, com tendência a <em>${shapeDesc}</em></p><p class="mt-2 text-gray-600 italic">Isso não é certo nem errado — é seu jeito único de organizar e interagir com o mundo.</p></div>`;
+          report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Tamanho dos Dedos</h4><p class="mt-3">Já seus dedos <strong>${ratioKey}</strong> revelam sua tendência inata para <em>${ratioDesc}</em></p><p class="mt-2 text-gray-600 italic">Sua força está justamente nessa forma de processar a vida. O convite é dançar no ritmo que equilibre sentir, pensar e agir — um pouco melhor a cada dia.</p></div>`;
+          report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Tamanho das Unhas</h4><p class="mt-3">Suas unhas <strong>${nailsKey}</strong> mostram como você constrói e lida com suas verdades, geralmente, <em>${nailsDesc}</em></p><p class="mt-2 text-gray-600 italic">Esse é seu ponto de equilíbrio entre o tradicional e o novo. Toda crença é um abrigo, mas vira prisão se não tiver portas abertas.</p></div>`;
+          if (tickles === 'Sim') {
+            report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Sensibilidade (Cócegas)</h4><p class="mt-3">A sensibilidade quanto as cócegas é um sinal refinado que... <em>${ticklesDesc}</em></p><p class="mt-2 text-gray-600 italic">Ser sensível é perceber o mundo com intensidade. A questão não é classificar como “aversão” ou “atração”, mas aprimorar essa percepção e se permitir viver novas sensações.</p></div>`;
+          }
+          report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Relação com os Pés</h4>`;
+          if (relationKey === 'Desconfortável') {
+              report += `<p class="mt-3">Sua relação com os pés <strong>${relationDisplay}</strong> reflete seu grau de integração com o corpo e emoções, pois <em>${relationDesc}</em></p>`;
+          } else {
+              report += `<p class="mt-3">Sua relação com os pés <strong>${relationDisplay}</strong> reflete seu grau de integração com o corpo e emoções: <em>${relationDesc}</em></p>`;
+          }
+          report += `<p class="mt-2 text-gray-600 italic">Quando há desconforto, há um convite para o autoconhecimento, pois o corpo é o palco onde a psique e o espírito se encontram.</p></div>`;
+          report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Pontos Fortes e Desafiadores</h4><p class="mt-3">Seus <strong>pontos fortes</strong> — <em>${strongPointsDesc}</em> — não são só talentos; são sabedoria já instalada.</p><p class="mt-3">O segredo não é lutar contra suas dificuldades, mas usar essa base como trampolim para lidar com seus <strong>pontos desafiadores</strong>: <em>${challengingPointsDesc}</em>.</p></div>`;
+          report += `<div class="mt-8 pt-4 border-t-2 border-green-200"><p class="font-semibold text-gray-700">Sabia que a fórmula está no equilíbrio entre ação, emoção e pensamento? Mais uma coisa, use seu instinto não como alarme, mas como radar para a beleza e verdades ainda escondidas.</p><p class="mt-4 text-gray-600 italic">E lembre-se sempre que puder, que você não é uma máquina, é um organismo pulsante e a vida quer fluir através de você, sem bloqueios e a compreensão sobre si é o primeiro passo para a transformação real, afinal, levar a vida a sério demais é o verdadeiro pecado contra o viver a vida e compreender como você pensa, sente e age não é só uma jornada, é a jornada mais extraordinária de todas!</p></div>`;
+          report += `<p class="mt-8 text-right">Fraternos Abraços!<br><strong>Irmo Zuccato Neto</strong></p>`;
+          return report;
+      }
+      
+      async function stopCamera() {
+        if (currentStream) {
+            // Garante que todas as trilhas (tracks) sejam interrompidas
+            currentStream.getTracks().forEach(track => track.stop());
+            currentStream = null;
+            cameraPreview.srcObject = null; // Limpa a referência do vídeo
+            cameraPreview.pause(); // Pausa o vídeo
+        }
+      }
+      
+      function showBlock(blockToShow) {
+        const allBlocks = [splashScreen, personalizationBlock, uploadBlock, cameraBlock, shapeInstructionBlock, ratioInstructionBlock, measurementBlock, shapeResultBlock, ratioResultBlock, nailsQuestionBlock, personalQuestionsBlock, finalReportBlock, previewBlock, legalDocumentsBlock];
+        
+        // CORREÇÃO: Força parada da câmera, pois o bloco "camera-block" NÃO será mais usado para capturar
+        stopCamera(); 
+
+        // Encontra o bloco ativo antes de escondê-lo
+        const currentActiveBlock = allBlocks.find(block => block && block.classList.contains('active-block'));
+
+        allBlocks.forEach(block => {
+          if (block && block.classList.contains('active-block')) {
+            block.classList.add('hiding');
+          }
+        });
+
+        setTimeout(() => {
+          allBlocks.forEach(block => {
+            if (block) block.classList.remove('active-block', 'hiding');
+          });
+          if (blockToShow) blockToShow.classList.add('active-block');
+          
+          // NOVO: Rastreia o bloco anterior, exceto se for o bloco legal (para evitar loop)
+          if (currentActiveBlock && currentActiveBlock.id !== blockToShow.id && blockToShow.id !== 'legal-documents-block') {
+             previousBlockId = currentActiveBlock.id;
+          }
+
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 300);
+      }
+      
+      function processImageAndContinue(dataUrl) {
+        // Se a imagem veio do input file/câmera nativa, pulamos o camera-block e vamos para o preview
+        if (currentStream) stopCamera(); // Garante que WebRTC pare (caso estivesse ligado)
+
+        img.onload = () => {
+            const maxWidth = 800, maxHeight = 600;
+            let { width, height } = img;
+            const aspectRatio = img.width / img.height;
+            if (img.width > maxWidth || img.height > maxHeight) {
+                if (aspectRatio > 1) { width = maxWidth; height = width / aspectRatio; } 
+                else { height = maxHeight; width = height * aspectRatio; }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Move diretamente para a tela de pré-visualização (Preview Block)
+            photoPreview.src = dataUrl;
+            imageUrl = dataUrl;
+            currentRotation = 0;
+            photoPreview.style.transform = 'rotate(0deg)';
+            showBlock(previewBlock);
+        };
+        img.src = dataUrl;
+      }
+      
+      // Função auxiliar para determinar se o dispositivo é mobile
+      function isMobileDevice() {
+          return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      }
+      
+      // FUNÇÃO DE CONFIGURAÇÃO DE AMBIENTE (NOVO)
+      function setupEnvironment() {
+          const isMobile = isMobileDevice();
+          const openCameraButtonLabel = document.getElementById('open-camera-button-label');
+          const cameraError = document.getElementById('camera-error');
+
+          if (isMobile) {
+              // Em dispositivos móveis, mostra o botão "Tirar Foto" e esconde a mensagem de erro desktop.
+              openCameraButtonLabel.classList.remove('hidden');
+              cameraError.classList.add('hidden');
+          } else {
+              // No desktop, esconde o botão "Tirar Foto" e mostra a mensagem para usar o Upload.
+              openCameraButtonLabel.classList.add('hidden');
+              cameraError.classList.remove('hidden');
+              cameraError.textContent = 'A função "Tirar Foto" está disponível apenas em dispositivos móveis. Por favor, use o botão "Fazer Upload" no computador.';
+          }
+      }
+
+
+      function startNewAnalysis() {
+        points = []; currentStep = 1; img = new Image(); imageUrl = ''; currentAnalysisPhase = 'shape';
+        userName = ''; clientName = ''; shapeResultText = ''; ratioResultText = ''; personalAnswers = {};
+        if(personalQuestionsForm) personalQuestionsForm.reset();
+        const userNameInput = document.getElementById('user-name-input'); if(userNameInput) userNameInput.value = '';
+        const clientNameInput = document.getElementById('client-name-input'); if(clientNameInput) clientNameInput.value = '';
+        const analysisTargetSelect = document.getElementById('analysis-target-select'); if(analysisTargetSelect) analysisTargetSelect.value = 'me';
+        const clientNameGroup = document.getElementById('client-name-group'); if(clientNameGroup) clientNameGroup.classList.add('step-container');
+        
+        setupEnvironment(); // Revalida o ambiente ao iniciar nova análise
+        showBlock(personalizationBlock);
+      }
+
+      function isEgyptianHarmonic(L1, L2, L3, L5) {
+          if (!(L1 > L2 && L2 > L3) || L1 <= L2 * 1.07) return false;
+          const d1 = L1 / L2, d2 = L2 / L3;
+          if (Math.abs(d1 - d2) / ((d1 + d2) / 2) > 0.25) return false;
+          if (L3 > L5 * 1.3 && (L3 / L5) > (L2 / L3) * 3) return false;
+          return true;
+      }
+
+      function isSquareFoot(L1, L2, L3, L5) {
+          const max = Math.max(L1, L2, L3), min = Math.min(L1, L2, L3), avg = (L1 + L2 + L3) / 3;
+          if ((max - min) / min > 0.025) return false;
+          const l4Est = L3 * 0.9 + L5 * 0.1;
+          return (L3 - L5) / L3 > 0.15 || Math.abs(l4Est - avg) / avg <= 0.025 || Math.abs(L5 - avg) / avg <= 0.025;
+      }
+
+      function classifyShape() {
+        if (points.length < 4) return;
+        const refY = canvas.height / 2;
+        const [L1, L2, L3, L5] = points.map(p => Math.abs(refY - p.y));
+        let shapeText, shapeEmoji, reasoning;
+        if (isEgyptianHarmonic(L1, L2, L3, L5)) {
+            [shapeText, shapeEmoji, reasoning] = ['Egípcio', '🌟', 'O dedão é dominante e há uma proporção de declínio consistente entre os três primeiros dedos.'];
+        } else if (isSquareFoot(L1, L2, L3, L5)) {
+            [shapeText, shapeEmoji, reasoning] = ['Quadrado', '🤖', 'Os três primeiros dedos têm tamanhos muito semelhantes, com pouca variação.'];
+        } else {
+            [shapeText, shapeEmoji, reasoning] = ['Grego/Romano', '🔍', L1 > L2 && L2 > L3 && L3 > L5 ? 'O formato é um tipo de Greco-Romano, pois, apesar da sequência decrescente, não apresenta a harmonia de um pé egípcio.' : 'A classificação é baseada na dominância do segundo dedo ou na falta de uma sequência de declínio progressiva.'];
+        }
+        shapeResultText = shapeText;
+        Object.assign(document.getElementById('shape-text'), { textContent: shapeText });
+        Object.assign(document.getElementById('classification-reasoning'), { textContent: reasoning });
+        Object.assign(document.getElementById('shape-result-image'), { src: imageUrl });
+        ['L1', 'L2', 'L3', 'L5'].forEach((id, i) => { document.getElementById(`${id}-value`).textContent = `${[L1,L2,L3,L5][i].toFixed(2)} px`; });
+        showBlock(shapeResultBlock);
+      }
+
+      function classifyRatio(ratio) {
+        const diff = Math.abs(ratio - goldenRatioIdeal) / goldenRatioIdeal;
+        if (diff <= 0.05) return { text: 'Normais (Análise do Tamanho dos Dedos)', color: 'result-perfect', progressColor: 'progress-bar-perfect' };
+        if (ratio <= 2.0) return { text: 'Dedos Longos', color: 'result-very-close', progressColor: 'progress-bar-very-close' };
+        if (ratio >= 3.0) return { text: 'Dedos Curtos', color: 'result-far', progressColor: 'progress-bar-far' };
+        return ratio > 2.5 ? { text: 'Normais para Curtos', color: 'result-close', progressColor: 'progress-bar-close' } : { text: 'Normais para Longos', color: 'result-close', progressColor: 'progress-bar-close' };
+      }
+
+      function calculateAndDisplayResult() {
+        if (currentAnalysisPhase === 'ratio') {
+          if (points.length < 3) return;
+          const toeLength = Math.hypot(points[1].x - points[0].x, points[1].y - points[0].y);
+          const footLength = Math.hypot(points[2].x - points[1].x, points[2].y - points[1].y);
+          const ratio = footLength / toeLength;
+          const classification = classifyRatio(ratio);
+          ratioResultText = classification.text.startsWith('Normais para') ? classification.text : classification.text.replace(/Dedos | \(.*\)/g, '').trim();
+          document.getElementById('ratio-calculated-ratio').textContent = ratio.toFixed(3);
+          document.getElementById('ratio-toe-length').textContent = `${toeLength.toFixed(2)} px`;
+          document.getElementById('ratio-foot-length').textContent = `${footLength.toFixed(2)} px`;
+          const resultRatioEl = document.getElementById('ratio-result-ratio');
+          resultRatioEl.textContent = ratio.toFixed(3);
+          resultRatioEl.className = `text-5xl font-extrabold mb-4 ${classification.color}`;
+          document.getElementById('ratio-result-text').textContent = classification.text;
+          const proximity = 100 - (Math.min(Math.abs(ratio - goldenRatioIdeal) / goldenRatioIdeal, 1) * 100);
+          const progressBar = document.getElementById('ratio-progress-bar');
+          progressBar.style.width = `${proximity}%`;
+          progressBar.className = `absolute h-3 rounded-full transition-all duration-500 ${classification.progressColor}`;
+          document.getElementById('ratio-result-image').src = imageUrl;
+          showBlock(ratioResultBlock);
+        } else if (currentAnalysisPhase === 'shape') {
+            classifyShape();
+        }
+      }
+      
+      function showFinalReport() {
+          let targetName = (document.getElementById('analysis-target-select').value === 'client' ? clientName : userName);
+          targetName = targetName.charAt(0).toUpperCase() + targetName.slice(1);
+          document.getElementById('report-target-name').textContent = targetName;
+          document.getElementById('final-report-image').src = imageUrl;
+          document.getElementById('summary-shape').textContent = shapeResultText;
+          document.getElementById('summary-ratio').textContent = ratioResultText;
+          const displayNailsMap = { 'pouco-visiveis': 'Pouco Visíveis', 'visiveis': 'Visíveis', 'bem-visiveis': 'Bem Visíveis' };
+          document.getElementById('summary-nails').textContent = displayNailsMap[personalAnswers.unhas] || 'N/A';
+          document.getElementById('summary-tickles').textContent = personalAnswers.q1;
+          document.getElementById('summary-relation').textContent = personalAnswers.q2;
+          expertAnalysisResult.innerHTML = "Montando a sua análise detalhada...";
+          setTimeout(() => {
+              expertAnalysisResult.innerHTML = generateFinalReportText(shapeResultText, ratioResultText, personalAnswers.unhas, personalAnswers.q1, personalAnswers.q2);
+              showBlock(finalReportBlock);
+              loadingSpinner.classList.add('hidden');
+              buttonTextSpan.classList.remove('hidden');
+              generateFinalReportButton.disabled = false;
+          }, 1500); 
+      }
+
+      function updateUI() {
+        const labels = currentAnalysisPhase === 'shape' ? shapeStepLabels : ratioStepLabels;
+        const buttonText = currentAnalysisPhase === 'shape' ? 'Calcular Formato' : 'Calcular Análise do Tamanho dos Dedos';
+        document.getElementById('instruction').textContent = currentStep <= labels.length ? `Clique para marcar o ponto ${currentStep}: ${labels[currentStep - 1]}` : `Marcações concluídas. Clique em "${buttonText}".`;
+        calculateButton.classList.toggle('hidden', currentStep <= labels.length);
+        calculateButton.textContent = buttonText;
+        canvas.classList.toggle('custom-cursor', currentStep <= labels.length);
+        const progressContainer = document.getElementById('progress-container');
+        progressContainer.innerHTML = '';
+        progressContainer.className = `mt-4 grid gap-2 grid-cols-${labels.length}`;
+        labels.forEach((label, index) => {
+          const isCompleted = index < currentStep - 1, isCurrent = index === currentStep - 1;
+          const bgColor = isCompleted ? 'bg-green-100 border-green-300 text-green-800' : isCurrent ? 'bg-blue-100 border-blue-300 text-blue-800' : 'bg-gray-100 border-gray-300 text-gray-600';
+          progressContainer.innerHTML += `<div class="p-2 text-sm rounded-lg border text-center ${bgColor}">${index + 1}. ${label}</div>`;
+        });
+      }
+
+      function drawCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        if (currentAnalysisPhase === 'shape') {
+          const refY = canvas.height / 2;
+          ctx.beginPath(); ctx.moveTo(0, refY); ctx.lineTo(canvas.width, refY);
+          Object.assign(ctx, { strokeStyle: 'rgba(239, 68, 68, 0.1)', lineWidth: 3 }).setLineDash([5, 5]); ctx.stroke(); ctx.setLineDash([]);
+        }
+        points.forEach((point, index) => {
+          if (currentAnalysisPhase === 'shape') {
+            const refY = canvas.height / 2;
+            ctx.beginPath(); ctx.moveTo(point.x, point.y); ctx.lineTo(point.x, refY);
+            Object.assign(ctx, { strokeStyle: 'rgba(255, 0, 0, 0.6)', lineWidth: 3 }).stroke();
+            if (index > 0) {
+              ctx.beginPath(); ctx.moveTo(points[index-1].x, points[index-1].y); ctx.lineTo(point.x, point.y);
+              Object.assign(ctx, { strokeStyle: 'rgba(0, 0, 255, 0.3)', lineWidth: 2 }).stroke();
+            }
+            Object.assign(ctx, { fillStyle: '#ff0000', font: 'bold 12px Arial' }).fillText(`${Math.abs(refY - point.y).toFixed(0)}px`, point.x + 10, (point.y + refY) / 2);
+          } else if (currentAnalysisPhase === 'ratio' && points.length >= 2) {
+            ctx.beginPath(); ctx.moveTo(points[0].x, points[0].y); ctx.lineTo(points[1].x, points[1].y);
+            Object.assign(ctx, { strokeStyle: '#ef4444', lineWidth: 3 }).stroke();
+            if (points.length >= 3) {
+              ctx.beginPath(); ctx.moveTo(points[1].x, points[1].y); ctx.lineTo(points[2].x, points[2].y);
+              Object.assign(ctx, { strokeStyle: '#3b82f6' }).setLineDash([5, 5]); ctx.stroke(); ctx.setLineDash([]);
+            }
+          }
+          ctx.beginPath(); ctx.arc(point.x, point.y, 8, 0, 2 * Math.PI);
+          Object.assign(ctx, { fillStyle: currentAnalysisPhase === 'ratio' ? (index < 2 ? '#ef4444' : '#3b82f6') : '#ff0000' }).fill();
+          Object.assign(ctx, { strokeStyle: '#ffffff', lineWidth: 2 }).stroke();
+          Object.assign(ctx, { fillStyle: '#ffffff', font: 'bold 14px Arial', textAlign: 'center' }).fillText(index + 1, point.x, point.y + 4);
+        });
+      }
+
+      function resetMeasurement() {
+        points = []; currentStep = 1; canvas.classList.add('custom-cursor');
+        drawCanvas(); updateUI();
+        showBlock(measurementBlock);
+      }
+      
+      function startRatioAnalysis() { currentAnalysisPhase = 'ratio'; points = []; currentStep = 1; showBlock(ratioInstructionBlock); }
+      function startShapeAnalysis() { currentAnalysisPhase = 'shape'; points = []; currentStep = 1; showBlock(shapeInstructionBlock); }
+      
+      // --- Event Listeners ---
+      if(startButton) startButton.addEventListener('click', () => { 
+          setupEnvironment(); 
+          showBlock(personalizationBlock); 
+          // CORREÇÃO: Remove a tela inicial e o cabeçalho após o primeiro clique para evitar sobreposição e problemas de layout (fluidity).
+          setTimeout(() => {
+              if (splashScreen) splashScreen.remove();
+              if (appHeaderContainer) appHeaderContainer.remove(); 
+          }, 400); // 300ms de transição + 100ms de buffer
+      });
+      if(document.getElementById('analysis-target-select')) document.getElementById('analysis-target-select').addEventListener('change', e => document.getElementById('client-name-group').classList.toggle('step-container', e.target.value !== 'client'));
+      if(continueToUploadButton) continueToUploadButton.addEventListener('click', () => { 
+          userName = document.getElementById('user-name-input').value.trim();
+          const target = document.getElementById('analysis-target-select').value;
+          clientName = target === 'client' ? document.getElementById('client-name-input').value.trim() : '';
+          const errorEl = document.getElementById('personalization-error');
+          if (!userName || (target === 'client' && !clientName)) return errorEl.classList.remove('hidden');
+          errorEl.classList.add('hidden');
+          let nameForDisplay = (target === 'client' ? clientName : userName);
+          document.getElementById('target-name-display').textContent = nameForDisplay.charAt(0).toUpperCase() + nameForDisplay.slice(1);
+          setupEnvironment(); // Aplica a lógica de esconder/mostrar botões
+          showBlock(uploadBlock);
+      });
+      
+      // NOVO: Listeners para abrir o bloco de Termos Legais
+      const openTermsLinks = document.querySelectorAll('#open-terms-splash, #open-terms-personalization');
+      openTermsLinks.forEach(link => {
+          link.addEventListener('click', (e) => {
+              e.preventDefault();
+              showBlock(legalDocumentsBlock);
+          });
+      });
+
+      // CORREÇÃO: Listener para voltar do bloco de Termos Legais
+      if(backFromLegalButton) backFromLegalButton.addEventListener('click', () => {
+          // O bloco anterior pode ser splash-screen (se removido) ou personalization-block.
+          const targetBlockId = previousBlockId;
+          const targetBlock = document.getElementById(targetBlockId);
+
+          if (targetBlock) {
+             showBlock(targetBlock);
+          } else {
+             // Se o bloco anterior foi o splash-screen (e já foi removido pelo startButton),
+             // voltamos para a tela de Personalização, que é o primeiro passo de fato.
+             showBlock(personalizationBlock);
+          }
+      });
+      
+      // LISTENER PARA O INPUT NATIVO DE FOTO (MOBILE)
+      if(nativeCameraInput) nativeCameraInput.addEventListener('change', e => e.target.files[0] && (reader => { 
+          reader.onload = evt => {
+              // Limpa o input após o upload para que o botão "Tirar Outra" funcione
+              e.target.value = '';
+              processImageAndContinue(evt.target.result);
+          }; 
+          reader.readAsDataURL(e.target.files[0]); 
+      })(new FileReader()));
+
+      // LISTENER PARA O INPUT DE UPLOAD PADRÃO (DESKTOP/MOBILE)
+      if(imageUpload) imageUpload.addEventListener('change', e => e.target.files[0] && (reader => { 
+          reader.onload = evt => {
+              e.target.value = '';
+              processImageAndContinue(evt.target.result);
+          }; 
+          reader.readAsDataURL(e.target.files[0]); 
+      })(new FileReader()));
+
+
+      if(canvas) canvas.addEventListener('click', e => {
+        const labels = currentAnalysisPhase === 'shape' ? shapeStepLabels : ratioStepLabels;
+        if (currentStep > labels.length) return;
+        const rect = canvas.getBoundingClientRect();
+        points.push({ x: (e.clientX - rect.left) * (canvas.width / rect.width), y: (e.clientY - rect.top) * (canvas.height / rect.height) });
+        currentStep++; drawCanvas(); updateUI();
+        if (currentStep > labels.length) {
+          canvas.classList.remove('custom-cursor');
+          setTimeout(calculateAndDisplayResult, 600);
+        }
+      });
+      if(calculateButton) calculateButton.addEventListener('click', calculateAndDisplayResult);
+      if(redoButton) redoButton.addEventListener('click', resetMeasurement);
+      if(continueToShapeMeasurement) continueToShapeMeasurement.addEventListener('click', () => { showBlock(measurementBlock); drawCanvas(); updateUI(); });
+      if(analyzeRatioButton) analyzeRatioButton.addEventListener('click', startRatioAnalysis);
+      if(continueToRatioMeasurement) continueToRatioMeasurement.addEventListener('click', () => { showBlock(measurementBlock); drawCanvas(); updateUI(); });
+      if(backToShapeMeasurementButton) backToShapeMeasurementButton.addEventListener('click', resetMeasurement); 
+      if(backToRatioMeasurementButton) backToRatioMeasurementButton.addEventListener('click', resetMeasurement);
+      if(newRatioAnalysisButton) newRatioAnalysisButton.addEventListener('click', () => { if (!ratioResultText) { return showBlock(ratioResultBlock); } document.getElementById('nails-result-image').src = imageUrl; showBlock(nailsQuestionBlock); });
+      if(continueToPersonalQuestions) continueToPersonalQuestions.addEventListener('click', () => { const unhas = document.querySelector('input[name="nails-visibility"]:checked'); if (!unhas) { return document.getElementById('nails-error').classList.remove('hidden'); } document.getElementById('nails-error').classList.add('hidden'); personalAnswers.unhas = unhas.value; showBlock(personalQuestionsBlock); });
+      if(generateFinalReportButton) generateFinalReportButton.addEventListener('click', () => {
+          const q1 = document.querySelector('input[name="question1"]:checked'), q2 = document.querySelector('input[name="question2"]:checked');
+          if (!q1 || !q2) return document.getElementById('questions-error').classList.remove('hidden');
+          document.getElementById('questions-error').classList.add('hidden');
+          personalAnswers.q1 = q1.value; personalAnswers.q2 = q2.value;
+          loadingSpinner.classList.remove('hidden'); buttonTextSpan.classList.add('hidden'); generateFinalReportButton.disabled = true;
+          showFinalReport();
+      });
+      if(startNewFullAnalysisButton) startNewFullAnalysisButton.addEventListener('click', startNewAnalysis);
+      
+      // Listeners de Ações da Câmera (AGORA USAM O FLUXO NATIVO DE INPUT)
+      // O botão retake-photo-button precisa disparar o input nativo novamente
+      if(retakePhotoButton) retakePhotoButton.addEventListener('click', () => { 
+        currentRotation = 0;
+        // Simula o clique no label que ativa o input nativo
+        document.getElementById('native-camera-input').click();
+      });
+      
+      // Os botões switch-camera-button e capture-button não são mais usados no fluxo nativo, 
+      // mas mantemos o JS deles como fallback caso o fluxo WebRTC fosse reativado.
+      
+      // openCameraButton (agora label) não precisa de listener complexo, pois o FOR faz o trabalho.
+
+      if(rotateLeftButton) rotateLeftButton.addEventListener('click', () => { currentRotation = (currentRotation - 90) % 360; photoPreview.style.transform = `rotate(${currentRotation}deg)`; });
+      if(rotateRightButton) rotateRightButton.addEventListener('click', () => { currentRotation = (currentRotation + 90) % 360; photoPreview.style.transform = `rotate(${currentRotation}deg)`; });
+      if(usePhotoButton) usePhotoButton.addEventListener('click', () => { 
+        if (!photoPreview.src) return;
+        
+        // Se houver rotação, aplica permanentemente
+        if (currentRotation !== 0) {
+          const tempCanvas = document.createElement('canvas');
+          const tempCtx = tempCanvas.getContext('2d');
+          const tempImg = new Image();
+          
+          tempImg.onload = () => {
+            // Ajusta dimensões do canvas para rotação
+            if (currentRotation === 90 || currentRotation === -270 || currentRotation === 270 || currentRotation === -90) {
+              tempCanvas.width = tempImg.height;
+              tempCanvas.height = tempImg.width;
+            } else {
+              tempCanvas.width = tempImg.width;
+              tempCanvas.height = tempImg.height;
+            }
+            
+            // Aplica a rotação
+            tempCtx.translate(tempCanvas.width / 2, tempCanvas.height / 2);
+            tempCtx.rotate((currentRotation * Math.PI) / 180);
+            tempCtx.drawImage(tempImg, -tempImg.width / 2, -tempImg.height / 2);
+            
+            // Processa a imagem rotacionada
+            const rotatedImageData = tempCanvas.toDataURL('image/jpeg', 0.9);
+            currentRotation = 0;
+            photoPreview.style.transform = 'rotate(0deg)';
+            startShapeAnalysis(rotatedImageData); // Inicia a análise com a imagem processada
+          };
+          
+          tempImg.src = photoPreview.src;
+        } else {
+          startShapeAnalysis(photoPreview.src); // Inicia a análise com a imagem original
+        }
+      });
+      
+      // Correção na função startShapeAnalysis para usar a imagem do parâmetro (se houver)
+      function startShapeAnalysis(imageOverrideUrl = imageUrl) { 
+          currentAnalysisPhase = 'shape'; 
+          points = []; 
+          currentStep = 1; 
+          
+          // Força o carregamento da imagem de pré-visualização, caso não tenha sido feito pelo onload
+          img.onload = () => {
+              // Mantém o tamanho do canvas com base no onload do processImageAndContinue
+              showBlock(shapeInstructionBlock); 
+              // A próxima tela será a de medição, mas mostramos a instrução primeiro.
+          };
+          img.src = imageOverrideUrl;
+      }
+      
+
+      // Listeners de Ações Finais
+      const saveAnalysisButton = document.getElementById('save-analysis-button');
+      const shareAnalysisButton = document.getElementById('share-analysis-button');
+
+      async function generateAndSavePDF() {
+        const reportElement = document.getElementById('final-report-block');
+        const targetName = document.getElementById('report-target-name').textContent || 'analise';
+        const filename = `Relatorio_Analise_Pes_${targetName.replace(/\s+/g, '_')}.pdf`;
+
+        // 1. Loading state and disabled buttons
+        saveAnalysisButton.textContent = 'Salvando...';
+        saveAnalysisButton.disabled = true;
+        shareAnalysisButton.disabled = true;
+
+        // ** Armazenar o estado original e reposicionamento temporário **
+        const originalParent = reportElement.parentNode;
+        const originalNextSibling = reportElement.nextSibling;
+        const originalStyle = reportElement.style.cssText;
+        const originalClassList = Array.from(reportElement.classList);
+        
+        // Remove classes de UI e de transição que causam problemas na renderização
+        reportElement.classList.remove('active-block', 'step-container', 'hiding');
+        
+        // Define estilos para forçar o fluxo de bloco e um tamanho previsível para o html2canvas.
+        Object.assign(reportElement.style, {
+            position: 'static', 
+            display: 'block',
+            opacity: '1',
+            transform: 'none',
+            transition: 'none',
+            // Configuração CRUCIAL: Define a largura para permitir que o html2canvas calcule o documento inteiro
+            // Força a largura para 100% fora do container de app e remove margens que podem ser interpretadas como espaço em branco
+            width: '100%', 
+            maxWidth: '100%', 
+            margin: '0', 
+            padding: '40px', 
+            boxShadow: 'none',
+            border: 'none',
+            boxSizing: 'border-box'
+        });
+
+        // Temporariamente move o elemento para o body, fora da restrição de #app-main-content
+        document.body.appendChild(reportElement);
+        
+        // Esconde os botões de ação (que não devem aparecer no PDF)
+        const actionButtons = reportElement.querySelector('.action-buttons');
+        const originalActionButtonsDisplay = actionButtons ? actionButtons.style.display : null;
+        if (actionButtons) actionButtons.style.display = 'none';
+        
+        // Oculta o container principal para evitar scrollbar dupla e conflitos de layout
+        const originalAppMainDisplay = appMainContent.style.display;
+        appMainContent.style.display = 'none';
+
+        try {
+            // 2. Garante que todas as imagens estejam carregadas
+            await ensureImagesLoaded(reportElement);
+
+            // Adiciona atraso para estabilização do DOM
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            // 3. Configuração do html2pdf com os requisitos específicos
+            const opt = {
+              margin: [5, 5, 5, 5],
+              filename: 'Analise_Pes.pdf',
+              image: { type: 'jpeg', quality: 1 },
+              html2canvas: { 
+                scale: 2, 
+                useCORS: true, 
+                logging: false,
+                scrollX: 0, 
+                scrollY: 0, 
+                windowWidth: document.documentElement.scrollWidth // Garantir largura total da viewport
+              },
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
+              pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            // 4. Gera e salva o PDF
+            await html2pdf().from(reportElement).set(opt).save();
+
+        } catch (err) {
+            console.error("Erro ao gerar PDF:", err);
+        } finally {
+            // 5. Restaura o estado original
+            
+            // 5.1. Restaura a posição no DOM
+            if (originalNextSibling) {
+                originalParent.insertBefore(reportElement, originalNextSibling);
+            } else if (originalParent) {
+                originalParent.appendChild(reportElement);
+            }
+
+            // 5.2. Restaura estilos e classes
+            reportElement.style.cssText = originalStyle;
+            reportElement.className = ''; // Limpa as classes
+            originalClassList.forEach(cls => reportElement.classList.add(cls)); // Adiciona as classes originais
+            
+            // 5.3. Restaura os botões de ação
+            if (actionButtons) actionButtons.style.display = originalActionButtonsDisplay;
+            
+            // 5.4. Restaura o container principal
+            appMainContent.style.display = originalAppMainDisplay;
+
+            // 6. Restaura os botões de controle de análise
+            saveAnalysisButton.textContent = 'Salvar Relatório';
+            saveAnalysisButton.disabled = false;
+            shareAnalysisButton.disabled = false;
+        }
+      }
+
+      if(saveAnalysisButton) saveAnalysisButton.addEventListener('click', generateAndSavePDF);
+      if(shareAnalysisButton) shareAnalysisButton.addEventListener('click', generateAndSavePDF);
+
+      document.querySelectorAll('#personal-questions-form label').forEach(label => label.addEventListener('click', function() { const input = this.querySelector('input[type="radio"]'); if(input) { document.querySelectorAll(`input[name="${input.name}"]`).forEach(r => r.parentElement.classList.remove('border-purple-500', 'bg-purple-100')); this.classList.add('border-purple-500', 'bg-purple-100'); input.checked = true; } }));
+    
+      document.addEventListener('keydown', e => {
+        if (e.key !== 'Enter' || (document.activeElement.tagName === 'INPUT' && document.activeElement.type === 'text')) return;
+        e.preventDefault();
+        const buttonMap = [{b:splashScreen,i:'start-button'},{b:personalizationBlock,i:'continue-to-upload'},{b:shapeInstructionBlock,i:'continue-to-shape-measurement'},{b:shapeResultBlock,i:'analyze-ratio-button'},{b:ratioInstructionBlock,i:'continue-to-ratio-measurement'},{b:measurementBlock,i:'calculate-button',c:()=>currentStep>(currentAnalysisPhase==='shape'?shapeStepLabels.length:ratioStepLabels.length)},{b:ratioResultBlock,i:'new-ratio-analysis-button'},{b:nailsQuestionBlock,i:'continue-to-personal-questions'},{b:personalQuestionsBlock,i:'generate-final-report-button'},{b:finalReportBlock,i:'start-new-full-analysis-button'}];
+        const entry = buttonMap.find(item => item.b && item.b.classList.contains('active-block'));
+        if (entry && (!entry.c || entry.c())) { const btn = document.getElementById(entry.i); if(btn) btn.id === 'image-upload' ? btn.closest('label').focus() : btn.click(); }
+      });
+      
+      // Chamada da função de setup na inicialização e ao mudar de tela
+      document.addEventListener('DOMContentLoaded', setupEnvironment);
+    });
+  </script>
+</body>
+</html>
