@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://raw.githubusercontent.com; media-src 'self' blob:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://raw.githubusercontent.com https://github.com; media-src 'self' blob:;">
   <title>Analisador dos Formatos e Tamanhos dos Dedos dos Pés - By Irmo Zuccato Neto</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -183,7 +183,16 @@
 
     <!-- Bloco de Personalização (Novo Bloco) -->
     <div id="personalization-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-2 border-dashed border-gray-300 text-center transition-all duration-300 step-container">
-        <h2 class="text-xl sm:text-2xl font-semibold mb-6">👋 Olá! Vamos começar.</h2>
+        
+        <div class="flex items-center justify-center mb-6">
+            <!-- IMAGEM DE BOAS VINDAS (Tamanho ajustado para largura: 150px, altura: 100px) -->
+            <img src="https://raw.githubusercontent.com/irmoneto/Analisador-Personalidade-Pes/main/IMAGENS%20APP/LOGO%20OLA.png" 
+                 alt="Logo de Boas-Vindas" 
+                 class="shadow-md mr-4" 
+                 style="width: 150px; height: 100px; border-radius: 10px;">
+            
+            <h2 class="text-xl sm:text-2xl font-semibold">VAMOS COMEÇAR...</h2>
+        </div>
         
         <div class="mb-6 text-left">
             <label for="user-name-input" class="block text-gray-700 font-semibold mb-2">Qual é o seu nome?</label>
@@ -534,7 +543,7 @@
     <div id="report-summary-container" class="flex flex-col sm:flex-row gap-8 items-start mb-10">
         <!-- Container Esquerdo: Resultados Iniciais -->
         <div class="flex-1 w-full bg-gray-50 p-6 rounded-lg border border-gray-200">
-            <h3 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Resumo da Análise</h3>
+            <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Resumo da Análise</h3>
             <ul class="space-y-3 text-gray-700 mt-4">
                 <li class="flex justify-between"><strong>Formato do Pé:</strong> <span id="summary-shape" class="font-semibold text-right"></span></li>
                 <li class="flex justify-between"><strong>Tamanho dos Dedos:</strong> <span id="summary-ratio" class="font-semibold text-right"></span></li>
@@ -557,6 +566,15 @@
         <div id="expert-analysis-result" class="prose max-w-none text-gray-800 leading-relaxed bg-gray-50 p-6 rounded-lg border-l-4 border-green-400">
             Aguardando os dados para gerar o relatório...
         </div>
+    </div>
+    
+    <!-- NOVO CTA para Página de Vendas -->
+    <div class="mt-8 mb-10 text-center">
+        <h4 class="text-xl font-bold text-gray-800 mb-4">Quer saber mais sobre o seu pé e como ele revela sua personalidade?</h4>
+        <a href="https://irmoneto.github.io/IRMONETO/" target="_blank" class="inline-flex items-center justify-center bg-yellow-500 text-white py-3 px-8 rounded-full font-bold shadow-xl hover:bg-yellow-600 transition-colors transform hover:scale-[1.03] text-lg">
+            Acesse a Página de Conhecimento
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+        </a>
     </div>
 
     <!-- Botões de Ação Final -->
@@ -759,7 +777,7 @@
               'Normais para Curtos': 'a oscilação entre impulso e ponderação, pois em momentos de pressão tende à impaciência. Corre o risco de agir com boa intenção, porém sem planejamento, e precisa desenvolver maior tolerância à frustração.',
               'Normais': 'a tendência à indecisão diante de múltiplas perspectivas, podendo demorar para agir em busca do equilíbrio. Corre o risco de racionalizar excessivamente os sentimentos e precisa definir limites claros, confiando mais na intuição.',
               'Normais para Longos': 'a sensibilidade acentuada, que pode gerar sobrecarga emocional e fazê-la absorver excessivamente o ambiente. Pode se dispersar em análises ou idealizações, adiando a ação prática e precisando estruturar o pensamento.',
-              'Longos': 'o excesso de reflexão que pode levar à paralisia na ação e a dificuldade em lidar com imprevistos. A tendência à autocrítica e idealização pode desconectá-la do corpo e do presente, necessitando aprender a agir com mais confiança.'
+              'Longos': 'o excesso de reflexão que pode levar à paralisação na ação e a dificuldade em lidar com imprevistos. A tendência à autocrítica e idealização pode desconectá-la do corpo e do presente, necessitando aprender a agir com mais confiança.'
           },
           'Tamanho das Unhas': {
               'Pouco Visível': 'pessoas que acreditam mais nas verdades externas e buscam segurança em referências do meio, demonstrando sensibilidade ao julgamento alheio. Podem apresentar rigidez cognitiva e resistência a mudanças, com necessidade de aprovação e tendência ao conformismo.',
