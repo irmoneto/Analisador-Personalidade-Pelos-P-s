@@ -49,7 +49,7 @@
     
     /* Estilo para o Loading Spinner */
     .loading-spinner {
-        border: 4px solid rgba(255, 255, 255, 0.3);
+        border: 4px solid rgba(255, 255, 12, 0.3);
         border-radius: 50%;
         border-top: 4px solid #fff;
         width: 1.5rem;
@@ -313,7 +313,7 @@
         <p class="text-blue-700">Aponte e clique exatamente nos locais indicados acima. Você verá números aparecerem nas marcações.</p>
       </div>
 
-      <button id="continue-to-ratio-measurement" class="bg-red-700 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-red-800 cursor-pointer transition-transform duration-200 transform hover:scale-105">
+      <button id="continue-to-ratio-measurement" class="bg-red-700 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-red-800 transition-transform duration-200 transform hover:scale-105">
         Entendi, Continuar
       </button>
     </div>
@@ -464,12 +464,12 @@
             <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Perguntas Complementares</h2>
             <p class="text-gray-600">Responda para completar sua análise</p>
             <div class="w-full bg-gray-200 rounded-full h-2 mt-4">
-                <div class="bg-purple-500 h-2 rounded-full" style="width: 75%"></div>
+                <div class="bg-purple-500 h-2 rounded-full" style="width: 50%"></div> <!-- Ajuste a barra de progresso -->
             </div>
         </div>
 
         <form id="personal-questions-form" class="space-y-6">
-            <!-- Pergunta 1 -->
+            <!-- Pergunta 1: Cócegas nos Pés -->
             <div class="bg-purple-50 rounded-xl p-6">
                 <div class="flex items-center mb-3">
                     <span class="bg-purple-600 text-white font-bold rounded-full w-6 h-6 flex items-center justify-center mr-3">1</span>
@@ -487,7 +487,7 @@
                 </div>
             </div>
 
-            <!-- Pergunta 2 -->
+            <!-- Pergunta 2: Relação com os Pés -->
             <div class="bg-purple-50 rounded-xl p-6">
                 <div class="flex items-center mb-3">
                     <span class="bg-purple-600 text-white font-bold rounded-full w-6 h-6 flex items-center justify-center mr-3">2</span>
@@ -513,6 +513,42 @@
                         <input type="radio" name="question2" value="Muito Confortável" class="sr-only">
                         <span class="font-medium mb-1">Muito Confortável</span>
                         <span class="text-xs text-gray-500">Totalmente natural</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- NOVA Pergunta 3: Joanetes -->
+            <div class="bg-purple-50 rounded-xl p-6">
+                <div class="flex items-center mb-3">
+                    <span class="bg-purple-600 text-white font-bold rounded-full w-6 h-6 flex items-center justify-center mr-3">3</span>
+                    <label class="text-lg font-semibold text-gray-800">Você tem joanetes?</label>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                    <label class="flex items-center justify-center p-3 bg-white rounded-lg border border-gray-200 hover:border-purple-400 transition-colors cursor-pointer">
+                        <input type="radio" name="question3" value="Sim" class="sr-only">
+                        <span class="font-medium">Sim</span>
+                    </label>
+                    <label class="flex items-center justify-center p-3 bg-white rounded-lg border border-gray-200 hover:border-purple-400 transition-colors cursor-pointer">
+                        <input type="radio" name="question3" value="Não" class="sr-only">
+                        <span class="font-medium">Não</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- NOVA Pergunta 4: Calos nos Dedos -->
+            <div class="bg-purple-50 rounded-xl p-6">
+                <div class="flex items-center mb-3">
+                    <span class="bg-purple-600 text-white font-bold rounded-full w-6 h-6 flex items-center justify-center mr-3">4</span>
+                    <label class="text-lg font-semibold text-gray-800">Você tem calos nos dedos?</label>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                    <label class="flex items-center justify-center p-3 bg-white rounded-lg border border-gray-200 hover:border-purple-400 transition-colors cursor-pointer">
+                        <input type="radio" name="question4" value="Sim" class="sr-only">
+                        <span class="font-medium">Sim</span>
+                    </label>
+                    <label class="flex items-center justify-center p-3 bg-white rounded-lg border border-gray-200 hover:border-purple-400 transition-colors cursor-pointer">
+                        <input type="radio" name="question4" value="Não" class="sr-only">
+                        <span class="font-medium">Não</span>
                     </label>
                 </div>
             </div>
@@ -551,6 +587,8 @@
                 <li class="flex justify-between"><strong>Tamanho das Unhas:</strong> <span id="summary-nails" class="font-semibold text-right"></span></li> 
                 <li class="flex justify-between"><strong>Cócegas nos Pés:</strong> <span id="summary-tickles" class="font-semibold text-right"></span></li> 
                 <li class="flex justify-between"><strong>Relação com os Pés:</strong> <span id="summary-relation" class="font-semibold text-right"></span></li>
+                <li class="flex justify-between"><strong>Joanetes:</strong> <span id="summary-joanetes" class="font-semibold text-right"></span></li>
+                <li class="flex justify-between"><strong>Calos nos Dedos:</strong> <span id="summary-calos" class="font-semibold text-right"></span></li>
             </ul>
         </div>
         
@@ -765,11 +803,11 @@
               'Quadrado': 'uma pessoa com predomínio do pensamento digital, que gosta de integrar tudo a tudo e com tudo, mostrando uma tendência ao utopismo e à busca por coerência total entre as partes.'
           },
           'Tamanho dos Dedos': {
-              'Curtos': 'pessoas diretas, objetivas e práticas que agem rapidamente diante das demandas, com foco em resultados imediatos. Elas preferem o concreto ao abstrato, valorizam a eficiência e a clareza, e costumam ser resolutivas, mas podem ter impaciência com processos demorados, tendendo a se expressar com firmeza.',
-              'Normais para Curtos': 'uma personalidade que combina praticidade e sensibilidade, apresentando características de dedos curtos, como a ação direta, e de dedos normais, como o equilíbrio e a ponderação. Busca resultados sem perder o vínculo com o outro, agindo com agilidade mas considerando o impacto emocional das decisões.',
-              'Normais': 'um equilíbrio entre ação, emoção e reflexão, em pessoas que conseguem pensar, sentir e agir de forma proporcional, adaptando-se bem à realidade. São flexíveis, ponderadas e coerentes, unindo objetividade e sensibilidade.',
-              'Normais para Longos': 'uma personalidade com predominância emocional e mental, que reúne características de dedos normais, como equilíbrio, e de longos, como reflexão profunda. São pessoas que pensam e sentem com intensidade, buscando significado nas experiências e combinando empatia com visão analítica.',
-              'Longos': 'pessoas reflexivas, analíticas e detalhistas que tendem à introspecção e à imaginação. Elas valorizam a compreensão antes da ação, preferindo o abstrato ao imediato, e demonstram sensibilidade emocional e profundidade intelectual, mas precisam cuidar para não se prenderem na idealização.'
+              'Curtos': 'Pessoas diretas, objetivas e práticas. Agem rapidamente diante das demandas, com foco em resultados imediatos. Preferem o concreto ao abstrato, valorizam eficiência e clareza. Costumam ser resolutivas, mas podem ter impaciência com processos demorados e introspectivos. Tendem a expressar-se com firmeza e buscar o que é útil e palpável.',
+              'Normais para Curtos': 'Personalidade que combina praticidade e sensibilidade. Apresenta características dos dedos curtos (ação direta, foco no imediato, praticidade) e dos dedos normais (equilíbrio, ponderação e percepção emocional). Busca resultados, mas sem perder o vínculo com o outro. Sabe agir com agilidade, mas também considera o impacto emocional das decisões. Pode alternar entre impulso e reflexão leve.',
+              'Normais': 'Representam equilíbrio entre ação, emoção e reflexão. Pessoas que conseguem pensar, sentir e agir de forma proporcional, adaptando-se bem às demandas da realidade. São flexíveis, ponderadas e coerentes. Conseguem unir objetividade e sensibilidade, respondendo com equilíbrio entre razão e intuição. Tendem a manter estabilidade emocional e clareza mental.',
+              'Normais para Longos': 'Personalidade com predominância emocional e mental. Reúne características dos dedos normais (equilíbrio e adaptação) e dos longos (reflexão profunda e sensibilidade ampliada). São pessoas que pensam e sentem com intensidade, tendendo a buscar significado nas experiências. Podem alternar entre ponderação e idealismo, combinando empatia e visão analítica.',
+              'Longos': 'Pessoas reflexivas, analíticas e detalhistas. Tendem à introspecção, imaginação e busca por sentido nas experiências. Valorizam a compreensão antes da ação, preferindo o abstrato ao imediato. Demonstram sensibilidade emocional e profundidade intelectual. Podem ser visionárias e criativas, mas precisam cuidar para não ficar presas na idealização ou no excesso de pensamento.'
           },
           'Pontos Fortes': {
               'Curtos': 'agilidade para agir e resolver situações práticas, espírito objetivo, direto e assertivo, capacidade de simplificar o complexo e transformar ideias em ações concretas, além de tomada de decisão rápida e senso de oportunidade.',
@@ -786,20 +824,37 @@
               'Longos': 'o excesso de reflexão que pode levar à paralisação na ação e a dificuldade em lidar com imprevistos. A tendência à autocrítica e idealização pode desconectá-la do corpo e do presente, necessitando aprender a agir com mais confiança.'
           },
           'Tamanho das Unhas': {
-              'Pouco Visível': 'pessoas que acreditam mais nas verdades externas e buscam segurança em referências do meio, demonstrando sensibilidade ao julgamento alheio. Podem apresentar rigidez cognitiva e resistência a mudanças, com necessidade de aprovação e tendência ao conformismo.',
-              'Visível': 'um equilíbrio entre convicção pessoal e abertura para o novo. São pessoas capazes de sustentar suas ideias sem ignorar perspectivas externas, demonstrando flexibilidade, senso crítico e capacidade de ajustar crenças, mantendo harmonia entre firmeza e escuta.',
-              'Bem Visível': 'pessoas que acreditam mais nas próprias verdades e agem com autoconfiança e firmeza, demonstrando independência intelectual. Adaptam-se bem às transformações sociais, mas podem expressar teimosia e resistência em reconhecer falhas, precisando cuidar para não confundir convicção com inflexibilidade.'
+              'Pouco Visível': 'Pessoas que acreditam mais nas verdades externas e tendem a buscar segurança em referências do meio. Demonstram maior sensibilidade ao julgamento alheio e preferência por seguir modelos já validados. Podem apresentar rigidez cognitiva e resistência a mudanças, mantendo padrões de pensamento consolidados. Mostram necessidade de aprovação e cautela ao expressar opiniões próprias, revelando menor flexibilidade emocional e tendência ao conformismo.',
+              'Visível': 'Indicam equilíbrio entre convicção pessoal e abertura para o novo. São pessoas capazes de sustentar suas ideias sem ignorar perspectivas externas. Demonstram flexibilidade cognitiva, senso crítico e capacidade de ajustar crenças diante de novas informações. Adaptam-se bem a contextos de mudança sem perder coerência interna. Mantêm harmonia entre firmeza e escuta, conciliando autenticidade e aprendizado.',
+              'Bem Visível': 'Pessoas que acreditam mais nas próprias verdades e tendem a agir com autoconfiança e firmeza de opinião. Demonstram independência intelectual e segurança em suas escolhas. Adaptam-se bem às transformações sociais e são capazes de sustentar posições com clareza, desde que percebam sentido pessoal. No entanto, podem expressar teimosia, dificuldade em ceder e resistência em reconhecer falhas. Valorizam autenticidade e coerência, mas precisam cuidar para não confundir convicção com inflexibilidade.'
           },
           'Cócegas nos Pés': {
-              'Sim': 'um sistema nervoso altamente responsivo e uma ligação com memórias corporais primárias, revelando emocionalidade viva e receptividade afetiva. Essa resposta sugere abertura ao contato, mas também possível vulnerabilidade, podendo refletir registros antigos de ansiedade ou excitação ligados ao toque.',
-              'Não': 'um sistema nervoso mais estável e previsível, com menor reatividade a estímulos sutis, o que revela estrutura emocional consistente e autoconfiança. A ausência de cócegas sugere integração entre instinto e consciência, embora possa, em certos contextos, refletir uma necessidade de manter distanciamento protetivo.'
+              'Sim': 'Indicam um sistema nervoso altamente responsivo e uma ligação direta com memórias corporais primárias, como experiências de toque e segurança no início da vida. Revelam emocionalidade viva, receptividade afetiva e sensibilidade instintiva a estímulos sutis. Essa resposta corporal sugere abertura ao contato, mas também possível vulnerabilidade diante do inesperado. Em alguns casos, pode refletir registros antigos de ansiedade ou excitação ligados ao toque, expressando a busca por controle diante da entrega.',
+              'Não': 'Indicam um sistema nervoso mais estável e previsível, com menor reatividade a estímulos sutis. Revelam estrutura emocional consistente, autoconfiança e apego seguro. A ausência de cócegas sugere integração entre instinto e consciência, permitindo presença corporal sem sobressaltos. Essa característica aponta para um padrão de maturidade sensorial e controle emocional, embora possa, em certos contextos, refletir necessidade de manter distanciamento protetivo diante do toque ou da vulnerabilidade.'
           },
           'Relação com os Pés': {
-              'Desconfortável': 'o desconforto diante dos pés expressa uma relação de distanciamento com aspectos instintivos, sensuais e afetivos do próprio corpo. Essa reação indica possíveis registros de repressão do prazer ou vergonha corporal, refletindo resistência em aceitar o que é natural e dificuldade em se entregar plenamente às sensações.',
-              'Neutro': 'a relação neutra ou ambivalente com os pés demonstra um estado de transição entre repressão e aceitação. Há curiosidade e desejo de aproximação, mas ainda coexistem julgamentos sutis ou receio do prazer, refletindo um processo de reconciliação entre instinto e consciência.',
-              'Confortável': 'o conforto com os pés revela uma relação harmônica entre corpo, prazer e presença, indicando aceitação dos impulsos naturais e abertura ao toque como linguagem de afeto. Há integração entre sensualidade e segurança emocional, refletindo maturidade na vivência do prazer.'
+              'Desconfortável': 'O desconforto diante dos pés expressa uma relação de distanciamento com aspectos instintivos, sensuais e afetivos do próprio corpo. Essa reação indica possíveis registros de repressão do prazer, vergonha corporal ou memórias associadas a controle e censura do toque. Reflete resistência em aceitar o instintivo e o natural, traduzindo dificuldade em se entregar plenamente às sensações e ao afeto. O corpo revela tensão entre o desejo de contato e o medo de perder o controle.',
+              'Neutro': 'A relação neutra ou ambivalente com os pés demonstra um estado de transição entre repressão e aceitação. Há curiosidade e desejo de aproximação, mas ainda coexistem julgamentos sutis ou receio do prazer. Esse padrão reflete um processo de reconciliação entre instinto e consciência, razão e sensorialidade. A pessoa alterna entre momentos de abertura para o toque e outros de racionalização, indicando amadurecimento emocional e integração progressiva com o corpo.',
+              'Confortável': 'O conforto com os pés revela uma relação harmônica entre corpo, prazer e presença. Indica aceitação dos impulsos naturais e abertura ao toque como linguagem de afeto, entrega e confiança. Há integração entre sensualidade e segurança emocional, refletindo maturidade na vivência do prazer e no reconhecimento do corpo como aliado da consciência. Essa naturalidade sugere equilíbrio entre instinto e autocontrole, leveza no contato e prazer em estar presente em si mesmo.'
           }
       };
+
+      // DADOS OBTIDOS DA TABELA SIMPLIFICADA OUTUBRO.txt PARA JOANETES E CALOS
+      const healthData = {
+          // Descrição para SIM (Joanetes) - ATUALIZADA
+          'Joanetes': {
+              'Sim': 'A presença de joanetes são indícios de um esforço inconsciente para manter vínculos afetivos marcados por insegurança, talvez porque em algum momento, faltou amparo e a pessoa aprendeu a sustentar relações moldando-se ao outro, mesmo à custa de si.',
+              // NOVO TEXTO PARA NÃO (Joanetes)
+              'Não': 'A ausência de Joanetes sugere uma estrutura de suporte interna robusta. Indica uma pessoa que tende a seguir seu caminho sem muito abalos quanto aos desvios causados por pressões ou conflitos com as figuras de autoridade da infância e juventude.'
+          },
+          // Descrição para SIM (Calos) - ATUALIZADA
+          'Calos nos Dedos': {
+              'Sim': 'Já, a presença de calos revelam acúmulo de energia reprimida — partes do ser que tentam se expressar, mas encontram bloqueios e refletem as defesas emocionais criadas por necessidade de proteção, geralmente associadas a experiências em que a pessoa sentiu que não podia reagir, expressar ou se posicionar frente a vida.',
+              // NOVO TEXTO PARA NÃO (Calos)
+              'Não': 'A ausência de calos sugere uma boa fluidez na adaptação em relação aos desafios da vida, com uma menor tendência a acumular tensões ou rigidez em seus padrões de externalizar seu mundo interior frente as situações da vida.'
+          }
+      };
+
 
       // FUNÇÃO AUXILIAR: GARANTE QUE AS IMAGENS ESTEJAM CARREGADAS
       function ensureImagesLoaded(element) {
@@ -825,7 +880,7 @@
         });
       }
 
-      function generateFinalReportText(shape, ratio, nailsValue, tickles, relation) {
+      function generateFinalReportText(shape, ratio, nailsValue, tickles, relation, joanetes, calos) {
           const clientName = escapeHTML(document.getElementById('report-target-name').textContent);
           const nailsKeyMap = {'pouco-visiveis': 'Pouco Visível', 'visiveis': 'Visível', 'bem-visiveis': 'Bem Visível'};
           const nailsKey = nailsKeyMap[nailsValue] || 'Visível';
@@ -840,20 +895,45 @@
           const strongPointsDesc = analysisData['Pontos Fortes'][ratioKey] || '';
           const challengingPointsDesc = analysisData['Pontos Desafiadores'][ratioKey] || '';
 
+          // Novas descrições baseadas no input do usuário
+          const joanetesDesc = healthData['Joanetes'][joanetes] || '';
+          const calosDesc = healthData['Calos nos Dedos'][calos] || '';
+
+          // Novo bloco consolidado de Joanetes e Calos
+          let joanetesCalosBlock = '';
+          
+          if (joanetes === 'Não' && calos === 'Não') {
+               // Cenário específico de ausência de ambas as marcas, conforme solicitado
+               joanetesCalosBlock = `
+                 <p class="mt-3">${joanetesDesc}</p>
+                 <p class="mt-3">${calosDesc}</p>
+                 <p class="mt-2 text-gray-600 italic">É importante saber que essas características, quando vistas nos pés, indicam conflitos dolorosos e observá-las é o primeiro passo para suavizar, acolher e ultrapassá-los.</p>
+               `;
+          } else {
+               // Cenários onde pelo menos uma marca está presente (Sim para Joanetes e/ou Calos, ou Não/Sim) - ATUALIZADO
+               joanetesCalosBlock = `
+                 <p class="mt-3">${joanetesDesc}</p>
+                 <p class="mt-3">${calosDesc}</p>
+                 <p class="mt-2 text-gray-600 italic">Essas marcas nos pés mostram pontos onde o corpo endureceu para manter controle, resistir ou suportar o peso emocional não expresso. São sinais de força usada em excesso, quando o corpo precisou se defender em vez de fluir.</p>
+                 <p class="mt-2 text-gray-600 italic">Observar essas marcas com atenção é o primeiro passo para transformar o padrão de onde há rigidez e liberar o que foi retido — seja a emoção não expressa ou o medo de se soltá-las.</p>
+               `;
+          }
+
+
           let report = `<p class="mb-6"><strong>${clientName}</strong>, seus pés revelam muito sobre como você pensa, sente e age no mundo. Enquanto a mente racionaliza, os pés simplesmente mostram a verdade. Vamos juntos entender essa linguagem silenciosa?</p>`;
           report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Formato do Pé</h4><p class="mt-3">Seu formato de pé <strong>${shape}</strong> traz a primeira pista sobre sua estrutura de pensamento, com tendência a <em>${shapeDesc}</em></p><p class="mt-2 text-gray-600 italic">Isso não é certo nem errado — é seu jeito único de organizar e interagir com o mundo.</p></div>`;
           report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Tamanho dos Dedos</h4><p class="mt-3">Já seus dedos <strong>${ratioKey}</strong> revelam sua tendência inata para <em>${ratioDesc}</em></p><p class="mt-2 text-gray-600 italic">Sua força está justamente nessa forma de processar a vida. O convite é dançar no ritmo que equilibre sentir, pensar e agir — um pouco melhor a cada dia.</p></div>`;
           report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Tamanho das Unhas</h4><p class="mt-3">Suas unhas <strong>${nailsKey}</strong> mostram como você constrói e lida com suas verdades, geralmente, <em>${nailsDesc}</em></p><p class="mt-2 text-gray-600 italic">Esse é seu ponto de equilíbrio entre o tradicional e o novo. Toda crença é um abrigo, mas vira prisão se não tiver portas abertas.</p></div>`;
+          
+          report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Sensibilidade e Relação com o Corpo</h4>`;
           if (tickles === 'Sim') {
-            report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Sensibilidade (Cócegas)</h4><p class="mt-3">A sensibilidade quanto as cócegas é um sinal refinado que... <em>${ticklesDesc}</em></p><p class="mt-2 text-gray-600 italic">Ser sensível é perceber o mundo com intensidade. A questão não é classificar como “aversão” ou “atração”, mas aprimorar essa percepção e se permitir viver novas sensações.</p></div>`;
+            report += `<p class="mt-3">A sensibilidade quanto as cócegas é um sinal refinado que... <em>${ticklesDesc}</em></p>`;
           }
-          report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Relação com os Pés</h4>`;
-          if (relationKey === 'Desconfortável') {
-              report += `<p class="mt-3">Sua relação com os pés <strong>${relationDisplay}</strong> reflete seu grau de integração com o corpo e emoções, pois <em>${relationDesc}</em></p>`;
-          } else {
-              report += `<p class="mt-3">Sua relação com os pés <strong>${relationDisplay}</strong> reflete seu grau de integração com o corpo e emoções: <em>${relationDesc}</em></p>`;
-          }
+          report += `<p class="mt-3">Sua relação com os pés <strong>${relationDisplay}</strong> reflete seu grau de integração com o corpo e emoções, pois <em>${relationDesc}</em></p>`;
           report += `<p class="mt-2 text-gray-600 italic">Quando há desconforto, há um convite para o autoconhecimento, pois o corpo é o palco onde a psique e o espírito se encontram.</p></div>`;
+          
+          report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Joanetes e Calos</h4>${joanetesCalosBlock}</div>`; // Título e Conteúdo atualizados
+
           report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Pontos Fortes e Desafiadores</h4><p class="mt-3">Seus <strong>pontos fortes</strong> — <em>${strongPointsDesc}</em> — não são só talentos; são sabedoria já instalada.</p><p class="mt-3">O segredo não é lutar contra suas dificuldades, mas usar essa base como trampolim para lidar com seus <strong>pontos desafiadores</strong>: <em>${challengingPointsDesc}</em>.</p></div>`;
           report += `<div class="mt-8 pt-4 border-t-2 border-green-200"><p class="font-semibold text-gray-700">Sabia que a fórmula está no equilíbrio entre ação, emoção e pensamento? Mais uma coisa, use seu instinto não como alarme, mas como radar para a beleza e verdades ainda escondidas.</p><p class="mt-4 text-gray-600 italic">E lembre-se sempre que puder, que você não é uma máquina, é um organismo pulsante e a vida quer fluir através de você, sem bloqueios e a compreensão sobre si é o primeiro passo para a transformação real, afinal, levar a vida a sério demais é o verdadeiro pecado contra o viver a vida e compreender como você pensa, sente e age não é só uma jornada, é a jornada mais extraordinária de todas!</p></div>`;
           report += `<p class="mt-8 text-right">Fraternos Abraços!<br><strong>Irmo Zuccato Neto</strong></p>`;
@@ -1039,12 +1119,23 @@
           document.getElementById('summary-shape').textContent = shapeResultText;
           document.getElementById('summary-ratio').textContent = ratioResultText;
           const displayNailsMap = { 'pouco-visiveis': 'Pouco Visíveis', 'visiveis': 'Visíveis', 'bem-visiveis': 'Bem Visíveis' };
-          document.getElementById('summary-nails').textContent = displayNailsMap[personalAnswers.unhas] || 'N/A';
-          document.getElementById('summary-tickles').textContent = personalAnswers.q1;
-          document.getElementById('summary-relation').textContent = personalAnswers.q2;
+          
+          // Captura das novas respostas
+          const unhas = personalAnswers.unhas;
+          const q1 = personalAnswers.q1;
+          const q2 = personalAnswers.q2;
+          const q3 = personalAnswers.q3; // Joanetes
+          const q4 = personalAnswers.q4; // Calos
+
+          document.getElementById('summary-nails').textContent = displayNailsMap[unhas] || 'N/A';
+          document.getElementById('summary-tickles').textContent = q1;
+          document.getElementById('summary-relation').textContent = q2;
+          document.getElementById('summary-joanetes').textContent = q3;
+          document.getElementById('summary-calos').textContent = q4;
+
           expertAnalysisResult.innerHTML = "Montando a sua análise detalhada...";
           setTimeout(() => {
-              expertAnalysisResult.innerHTML = generateFinalReportText(shapeResultText, ratioResultText, personalAnswers.unhas, personalAnswers.q1, personalAnswers.q2);
+              expertAnalysisResult.innerHTML = generateFinalReportText(shapeResultText, ratioResultText, unhas, q1, q2, q3, q4);
               showBlock(finalReportBlock);
               loadingSpinner.classList.add('hidden');
               buttonTextSpan.classList.remove('hidden');
@@ -1199,14 +1290,30 @@
       if(backToRatioMeasurementButton) backToRatioMeasurementButton.addEventListener('click', resetMeasurement);
       if(newRatioAnalysisButton) newRatioAnalysisButton.addEventListener('click', () => { if (!ratioResultText) { return showBlock(ratioResultBlock); } document.getElementById('nails-result-image').src = imageUrl; showBlock(nailsQuestionBlock); });
       if(continueToPersonalQuestions) continueToPersonalQuestions.addEventListener('click', () => { const unhas = document.querySelector('input[name="nails-visibility"]:checked'); if (!unhas) { return document.getElementById('nails-error').classList.remove('hidden'); } document.getElementById('nails-error').classList.add('hidden'); personalAnswers.unhas = unhas.value; showBlock(personalQuestionsBlock); });
+      
+      // Listener do Relatório Final (Atualizado para 4 perguntas)
       if(generateFinalReportButton) generateFinalReportButton.addEventListener('click', () => {
-          const q1 = document.querySelector('input[name="question1"]:checked'), q2 = document.querySelector('input[name="question2"]:checked');
-          if (!q1 || !q2) return document.getElementById('questions-error').classList.remove('hidden');
+          const q1 = document.querySelector('input[name="question1"]:checked'), 
+                q2 = document.querySelector('input[name="question2"]:checked'),
+                q3 = document.querySelector('input[name="question3"]:checked'),
+                q4 = document.querySelector('input[name="question4"]:checked');
+
+          if (!q1 || !q2 || !q3 || !q4) {
+             return document.getElementById('questions-error').classList.remove('hidden');
+          }
+          
           document.getElementById('questions-error').classList.add('hidden');
-          personalAnswers.q1 = q1.value; personalAnswers.q2 = q2.value;
-          loadingSpinner.classList.remove('hidden'); buttonTextSpan.classList.add('hidden'); generateFinalReportButton.disabled = true;
+          personalAnswers.q1 = q1.value; 
+          personalAnswers.q2 = q2.value;
+          personalAnswers.q3 = q3.value; // Joanetes
+          personalAnswers.q4 = q4.value; // Calos
+
+          loadingSpinner.classList.remove('hidden'); 
+          buttonTextSpan.classList.add('hidden'); 
+          generateFinalReportButton.disabled = true;
           showFinalReport();
       });
+
       if(startNewFullAnalysisButton) startNewFullAnalysisButton.addEventListener('click', startNewAnalysis);
       
       // Listeners de Ações da Câmera (AGORA USAM O FLUXO NATIVO DE INPUT)
@@ -1390,7 +1497,15 @@
       if(saveAnalysisButton) saveAnalysisButton.addEventListener('click', generateAndSavePDF);
       if(shareAnalysisButton) shareAnalysisButton.addEventListener('click', generateAndSavePDF);
 
-      document.querySelectorAll('#personal-questions-form label').forEach(label => label.addEventListener('click', function() { const input = this.querySelector('input[type="radio"]'); if(input) { document.querySelectorAll(`input[name="${input.name}"]`).forEach(r => r.parentElement.classList.remove('border-purple-500', 'bg-purple-100')); this.classList.add('border-purple-500', 'bg-purple-100'); input.checked = true; } }));
+      // Listener para cliques nos botões de rádio
+      document.querySelectorAll('#personal-questions-form label').forEach(label => label.addEventListener('click', function() { 
+          const input = this.querySelector('input[type="radio"]'); 
+          if(input) { 
+              document.querySelectorAll(`input[name="${input.name}"]`).forEach(r => r.parentElement.classList.remove('border-purple-500', 'bg-purple-100')); 
+              this.classList.add('border-purple-500', 'bg-purple-100'); 
+              input.checked = true; 
+          } 
+      }));
     
       document.addEventListener('keydown', e => {
         if (e.key !== 'Enter' || (document.activeElement.tagName === 'INPUT' && document.activeElement.type === 'text')) return;
