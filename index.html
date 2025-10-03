@@ -184,14 +184,15 @@
     <!-- Bloco de Personalização (Novo Bloco) -->
     <div id="personalization-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-2 border-dashed border-gray-300 text-center transition-all duration-300 step-container">
         
-        <div class="flex items-center justify-center mb-6">
+        <!-- Ajuste para centralizar o cabeçalho e empilhar no mobile -->
+        <div class="flex flex-col sm:flex-row items-center justify-center sm:mb-6 mb-4">
             <!-- IMAGEM DE BOAS VINDAS (Tamanho ajustado para largura: 150px, altura: 100px) -->
             <img src="https://raw.githubusercontent.com/irmoneto/Analisador-Personalidade-Pes/main/IMAGENS%20APP/LOGO%20OLA.png" 
                  alt="Logo de Boas-Vindas" 
-                 class="shadow-md mr-4" 
-                 style="width: 150px; height: 100px; border-radius: 10px;">
+                 class="shadow-md sm:mr-4 mx-auto mb-4 sm:mb-0" 
+                 style="width: 150px; height: 100px; max-width: 150px; border-radius: 10px;">
             
-            <h2 class="text-xl sm:text-2xl font-semibold">VAMOS COMEÇAR...</h2>
+            <h2 class="text-xl sm:text-2xl font-semibold text-gray-800">VAMOS COMEÇAR...</h2>
         </div>
         
         <div class="mb-6 text-left">
@@ -553,7 +554,7 @@
             </ul>
         </div>
         
-        <!-- Container Direito: Foto (AJUSTADO PARA REDUZIR O TAMANHO) -->
+        <!-- Container Direito: Foto -->
         <div class="w-full sm:w-1/3 flex justify-center items-center">
             <img id="final-report-image" 
                  src="" 
@@ -563,25 +564,26 @@
         </div>
     </div>
 
-    <!-- Container Inferior: Análise de Personalidade -->
-    <div>
+    <!-- Container Inferior: Análise de Personalidade e CTA (Layout ajustado para celular) -->
+    <div class="flex flex-col space-y-8">
         <h3 class="text-2xl font-extrabold text-gray-800 mb-4 text-center">Relatório de Análise da Personalidade pelos Pés</h3>
-        <!-- O texto do relatório gerado será inserido aqui -->
-        <div id="expert-analysis-result" class="prose max-w-none text-gray-800 leading-relaxed bg-gray-50 p-6 rounded-lg border-l-4 border-green-400">
+        
+        <!-- Bloco de Análise Detalhada (Melhor espaçamento interno) -->
+        <div id="expert-analysis-result" class="prose max-w-none text-gray-800 leading-relaxed bg-gray-50 p-6 sm:p-8 rounded-lg border-l-4 border-green-400">
             Aguardando os dados para gerar o relatório...
+        </div>
+    
+        <!-- CTA para Página de Vendas (Melhor margem para mobile/desktop) -->
+        <div class="mt-8 mb-4 text-center">
+            <h4 class="text-xl font-bold text-gray-800 mb-4">Quer saber mais sobre o seu pé e como ele revela sua personalidade?</h4>
+            <a href="https://irmoneto.github.io/IRMONETO/" target="_blank" class="inline-flex items-center justify-center bg-yellow-500 text-white py-3 px-8 rounded-full font-bold shadow-xl hover:bg-yellow-600 transition-colors transform hover:scale-[1.03] text-lg w-full sm:w-auto">
+                Acesse a Página de Conhecimento
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+            </a>
         </div>
     </div>
     
-    <!-- NOVO CTA para Página de Vendas -->
-    <div class="mt-8 mb-10 text-center">
-        <h4 class="text-xl font-bold text-gray-800 mb-4">Quer saber mais sobre o seu pé e como ele revela sua personalidade?</h4>
-        <a href="https://irmoneto.github.io/IRMONETO/" target="_blank" class="inline-flex items-center justify-center bg-yellow-500 text-white py-3 px-8 rounded-full font-bold shadow-xl hover:bg-yellow-600 transition-colors transform hover:scale-[1.03] text-lg">
-            Acesse a Página de Conhecimento
-            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-        </a>
-    </div>
-
-    <!-- Botões de Ação Final -->
+    <!-- Botões de Ação Final (Layout já era responsivo, mantido) -->
     <div class="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4 action-buttons">
         <button id="save-analysis-button" class="bg-green-600 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-green-700 transition-colors w-full sm:w-auto">
             Salvar Relatório
