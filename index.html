@@ -151,6 +151,15 @@
         opacity: 1;
         transform: translate(-50%, 0);
     }
+    
+    /* Justificar texto do relatório final */
+    #expert-analysis-result {
+        text-align: justify;
+    }
+    
+    #expert-analysis-result p {
+        text-align: justify;
+    }
 </style>
 </head>
 <body class="bg-animation min-h-screen p-4 sm:p-8 text-gray-800 flex items-center justify-center">
@@ -993,43 +1002,43 @@
           }
 
 
-          let report = `<p class="mb-6"><strong>${clientName}</strong>, seus pés revelam muito sobre como você pensa, sente e age no mundo. Enquanto a mente racionaliza, os pés simplesmente mostram a verdade. Vamos juntos entender essa linguagem silenciosa?</p>`;
+          let report = `<p class="mb-2"><strong>${clientName}</strong>, seus pés revelam muito sobre como você pensa, sente e age no mundo. Enquanto a mente racionaliza, os pés simplesmente mostram a verdade. Vamos juntos entender essa linguagem silenciosa?</p>`;
           
           // Formato do Pé (CORRIGIDO)
-          report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Formato do Pé</h4><p class="mt-3">Seu formato de pé <strong>${shape}</strong> traz a primeira pista sobre sua estrutura de pensamento, com tendência a <em>${shapeDesc}</em></p><p class="mt-2 text-gray-600 italic">Isso não é certo nem errado — é seu jeito único de organizar e interagir com o mundo.</p></div>`;
+          report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Formato do Pé</h4><p class="mt-1">Seu formato de pé <strong>${shape}</strong> traz a primeira pista sobre sua estrutura de pensamento, com tendência a <em>${shapeDesc}</em></p><p class="mt-1 text-gray-600 italic text-sm">Isso não é certo nem errado — é seu jeito único de organizar e interagir com o mundo.</p></div>`;
           
           // Tamanho dos Dedos (CORRIGIDO)
-          report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Tamanho dos Dedos</h4><p class="mt-3">Já seus dedos <strong>${ratioKey}</strong> revelam sua tendência inata para <em>${ratioDesc}</em></p><p class="mt-2 text-gray-600 italic">Sua força está justamente nessa forma de processar a vida. O convite é dançar no ritmo que equilibre sentir, pensar e agir — um pouco melhor a cada dia.</p></div>`;
+          report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Tamanho dos Dedos</h4><p class="mt-1">Já seus dedos <strong>${ratioKey}</strong> revelam sua tendência inata para <em>${ratioDesc}</em></p><p class="mt-1 text-gray-600 italic text-sm">Sua força está justamente nessa forma de processar a vida. O convite é dançar no ritmo que equilibre sentir, pensar e agir — um pouco melhor a cada dia.</p></div>`;
           
           // Tamanho das Unhas (CORRIGIDO)
-          report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Tamanho das Unhas</h4><p class="mt-3">Suas unhas <strong>${nailsKey}</strong> mostram como você constrói e lida com suas verdades, geralmente, <em>${nailsDesc}</em></p><p class="mt-2 text-gray-600 italic">Esse é seu ponto de equilíbrio entre o tradicional e o novo. Toda crença é um abrigo, mas vira prisão se não tiver portas abertas.</p></div>`;
+          report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Tamanho das Unhas</h4><p class="mt-1">Suas unhas <strong>${nailsKey}</strong> mostram como você constrói e lida com suas verdades, geralmente, <em>${nailsDesc}</em></p><p class="mt-1 text-gray-600 italic text-sm">Esse é seu ponto de equilíbrio entre o tradicional e o novo. Toda crença é um abrigo, mas vira prisão se não tiver portas abertas.</p></div>`;
           
           // Sensibilidade e Relação com o Corpo
-          report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Sensibilidade e Relação com o Corpo</h4>`;
+          report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Sensibilidade e Relação com o Corpo</h4>`;
           if (tickles === 'Sim') {
             // CORREÇÃO 2: Remove 'que indicam um...' e os reticências
             let ticklesClean = (analysisData['Cócegas nos Pés'][tickles] || '').replace(/Indicam um/i, '').trim();
             // A frase no relatório é: "A sensibilidade quanto às cócegas é um sinal refinado que indicam um... [restante da descrição]".
             // Substituímos a frase do template para remover a repetição e a reticência
-            report += `<p class="mt-3">A sensibilidade quanto às cócegas é um sinal refinado que <em>${formatText(lowerCaseFirst(ticklesClean))}</em></p>`;
+            report += `<p class="mt-1">A sensibilidade quanto às cócegas é um sinal refinado que <em>${formatText(lowerCaseFirst(ticklesClean))}</em></p>`;
           } else {
-             report += `<p class="mt-3">A ausência de cócegas é um sinal de estabilidade que <em>${formatText(lowerCaseFirst(analysisData['Cócegas nos Pés'][tickles] || ''))}</em></p>`;
+             report += `<p class="mt-1">A ausência de cócegas é um sinal de estabilidade que <em>${formatText(lowerCaseFirst(analysisData['Cócegas nos Pés'][tickles] || ''))}</em></p>`;
           }
           // Relação com os Pés (CORRIGIDO)
-          report += `<p class="mt-3">Sua relação com os pés <strong>${relationDisplay}</strong> reflete seu grau de integração com o corpo e emoções, pois <em>${relationDesc}</em></p>`;
-          report += `<p class="mt-2 text-gray-600 italic">Quando há desconforto, há um convite para o autoconhecimento, pois o corpo é o palco onde a psique e o espírito se encontram.</p></div>`;
+          report += `<p class="mt-1">Sua relação com os pés <strong>${relationDisplay}</strong> reflete seu grau de integração com o corpo e emoções, pois <em>${relationDesc}</em></p>`;
+          report += `<p class="mt-1 text-gray-600 italic text-sm">Quando há desconforto, há um convite para o autoconhecimento, pois o corpo é o palco onde a psique e o espírito se encontram.</p></div>`;
           
           // Joanetes e Calos
-          report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Joanetes e Calos</h4>${joanetesCalosBlock}</div>`; // Título e Conteúdo atualizados
+          report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Joanetes e Calos</h4>${joanetesCalosBlock}</div>`; // Título e Conteúdo atualizados
 
           // Pontos Fortes e Desafiadores
           // CORREÇÃO 1: Remoção do "a" duplicado. Isso é resolvido garantindo que o `connector` seja anexado diretamente ao texto `challengingPointsList` sem espaços extras.
-          report += `<div class="mt-6"><h4 class="text-xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Pontos Fortes e Desafiadores</h4><p class="mt-3">Seus <strong>pontos fortes</strong> — <em>${strongPointsDesc}</em> — não são só talentos; são sabedoria já instalada.</p><p class="mt-3">O segredo não é lutar contra suas dificuldades, mas usar essa base como trampolim para lidar com seus <strong>pontos desafiadores</strong>${challengingPointsFormatted}.</p></div>`;
+          report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Pontos Fortes e Desafiadores</h4><p class="mt-1">Seus <strong>pontos fortes</strong> — <em>${strongPointsDesc}</em> — não são só talentos; são sabedoria já instalada.</p><p class="mt-1">O segredo não é lutar contra suas dificuldades, mas usar essa base como trampolim para lidar com seus <strong>pontos desafiadores</strong>${challengingPointsFormatted}.</p></div>`;
           
           // Conclusão
-          report += `<div class="mt-8 pt-4 border-t-2 border-green-200"><p class="font-semibold text-gray-700">Sabia que a fórmula está no equilíbrio entre ação, emoção e pensamento? Mais uma coisa, use seu instinto não como alarme, mas como radar para a beleza e verdades ainda escondidas.</p><p class="mt-4 text-gray-600 italic">E lembre-se sempre que puder, que você não é uma máquina, é um organismo pulsante e a vida quer fluir através de você, sem bloqueios. A compreensão sobre si é o primeiro passo para a transformação real, afinal, levar a vida a sério demais é o verdadeiro pecado contra o viver a vida e compreender como você pensa, sente e age não é só uma jornada, é a jornada mais extraordinária de todas!</p></div>`;
+          report += `<div class="mt-3 pt-2 border-t-2 border-green-200"><p class="font-semibold text-gray-700 text-sm">Sabia que a fórmula está no equilíbrio entre ação, emoção e pensamento? Mais uma coisa, use seu instinto não como alarme, mas como radar para a beleza e verdades ainda escondidas.</p><p class="mt-2 text-gray-600 italic text-sm">E lembre-se sempre que puder, que você não é uma máquina, é um organismo pulsante e a vida quer fluir através de você, sem bloqueios. A compreensão sobre si é o primeiro passo para a transformação real, afinal, levar a vida a sério demais é o verdadeiro pecado contra o viver a vida e compreender como você pensa, sente e age não é só uma jornada, é a jornada mais extraordinária de todas!</p></div>`;
           
-          report += `<p class="mt-8 text-right">Fraternos Abraços!<br><strong>Irmo Zuccato Neto</strong></p>`;
+          report += `<p class="mt-3 text-right text-sm">Fraternos Abraços!<br><strong>Irmo Zuccato Neto</strong></p>`;
           return report;
       }
       
@@ -1522,8 +1531,8 @@
 
       async function generateAndSavePDF() {
         const reportElement = document.getElementById('final-report-block');
-        const targetName = document.getElementById('report-target-name').textContent || 'analise';
-        const filename = `Relatorio_Analise_Pes_${targetName.replace(/\s+/g, '_')}.pdf`;
+        const targetName = document.getElementById('report-target-name').textContent || 'Cliente';
+        const filename = `Analise_dos_Pes_de_${targetName.replace(/\s+/g, '_')}.pdf`;
 
         // 1. Loading state and disabled buttons
         saveAnalysisButton.textContent = 'Salvando...';
@@ -1551,7 +1560,7 @@
             width: '100%', 
             maxWidth: '100%', 
             margin: '0', 
-            padding: '40px', 
+            padding: '25px', 
             boxShadow: 'none',
             border: 'none',
             boxSizing: 'border-box'
@@ -1578,11 +1587,11 @@
             
             // 3. Configuração do html2pdf com os requisitos específicos
             const opt = {
-              margin: [5, 5, 5, 5],
-              filename: 'Analise_Pes.pdf',
-              image: { type: 'jpeg', quality: 1 },
+              margin: [10, 10, 10, 10],
+              filename: filename,
+              image: { type: 'jpeg', quality: 0.95 },
               html2canvas: { 
-                scale: 2, 
+                scale: 1.5, 
                 useCORS: true, 
                 logging: false,
                 scrollX: 0, 
