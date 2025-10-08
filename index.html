@@ -3,7 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://raw.githubusercontent.com https://github.com; media-src 'self' blob:;">
+  
+  <!-- NOVO: Meta Tag de Verificação do Google AdSense -->
+  <meta name="google-adsense-account" content="ca-pub-2957847231347233">
+  
+  <!-- INÍCIO: INTEGRAÇÃO GOOGLE ADSENSE (ID DE CLIENTE INSERIDO) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2957847231347233" crossorigin="anonymous"></script>
+  <!-- FIM: INTEGRAÇÃO GOOGLE ADSENSE -->
+  
+  <!-- Content Security Policy: Garantindo que todos os recursos externos (CDNs e AdSense) sejam carregados via HTTPS -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://pagead2.googlesyndication.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://raw.githubusercontent.com https://github.com; media-src 'self' blob:;">
   <title>Analisador dos Formatos e Tamanhos dos Dedos dos Pés - By Irmo Zuccato Neto</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -11,16 +20,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- NOVO: Meta Tag de Verificação do Google AdSense -->
-  <meta name="google-adsense-account" content="ca-pub-2957847231347233">
-  
-  <!-- INÍCIO: INTEGRAÇÃO GOOGLE ADSENSE (ID DE CLIENTE INSERIDO) -->
-  <!-- 
-  ID do Cliente: ca-pub-2957847231347233
-  -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2957847231347233" crossorigin="anonymous"></script>
-  <!-- FIM: INTEGRAÇÃO GOOGLE ADSENSE -->
-
   <style>
     body { font-family: 'Inter', sans-serif; }
     /* Esconde todos os containers por padrão */
@@ -746,7 +745,7 @@
     // --- Variáveis de Configuração do AdSense ---
     // ID DE CLIENTE JÁ INSERIDO
     const AD_CLIENT_ID = "ca-pub-2957847231347233"; 
-    // AGUARDANDO ID DO SLOT (data-ad-slot)
+    // AGUARDANDO ID DO SLOT (data-ad-slot) - **ESTE PRECISA SER SUBSTITUÍDO**
     const AD_SLOT_ID = "SEU_DATA_AD_SLOT_AQUI"; 
     
     // Função para criar o contêiner do anúncio
@@ -1769,3 +1768,5 @@
   </script>
 </body>
 </html>
+
+
