@@ -11,12 +11,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- INÍCIO: INTEGRAÇÃO GOOGLE ADSENSE -->
+  <!-- NOVO: Meta Tag de Verificação do Google AdSense -->
+  <meta name="google-adsense-account" content="ca-pub-2957847231347233">
+  
+  <!-- INÍCIO: INTEGRAÇÃO GOOGLE ADSENSE (ID DE CLIENTE INSERIDO) -->
   <!-- 
-  IMPORTANTE: Substitua 'SEU_DATA_AD_CLIENT_AQUI' pelo seu ID de cliente real do AdSense.
-  Este script carrega a biblioteca do AdSense.
+  ID do Cliente: ca-pub-2957847231347233
   -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=SEU_DATA_AD_CLIENT_AQUI" crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2957847231347233" crossorigin="anonymous"></script>
   <!-- FIM: INTEGRAÇÃO GOOGLE ADSENSE -->
 
   <style>
@@ -742,17 +744,18 @@
 
   <script>
     // --- Variáveis de Configuração do AdSense ---
-    // IMPORTANTE: SUBSTITUA ESTES VALORES PELOS SEUS REAIS
-    const AD_CLIENT_ID = "SEU_DATA_AD_CLIENT_AQUI"; 
+    // ID DE CLIENTE JÁ INSERIDO
+    const AD_CLIENT_ID = "ca-pub-2957847231347233"; 
+    // AGUARDANDO ID DO SLOT (data-ad-slot)
     const AD_SLOT_ID = "SEU_DATA_AD_SLOT_AQUI"; 
     
     // Função para criar o contêiner do anúncio
     function createAdContainer() {
-        if (!AD_CLIENT_ID.includes('pub-') || !AD_SLOT_ID) {
-            console.warn("AD WARNING: IDs do AdSense não configurados. Usando um placeholder.");
+        if (!AD_CLIENT_ID.includes('pub-') || !AD_SLOT_ID || AD_SLOT_ID === "SEU_DATA_AD_SLOT_AQUI") {
+            console.warn("AD WARNING: ID do Slot do AdSense ainda não configurado. Usando um placeholder.");
             const placeholder = document.createElement('div');
             placeholder.className = 'w-full h-24 bg-gray-200 flex items-center justify-center text-gray-600 text-xs rounded-lg';
-            placeholder.textContent = 'Espaço de Anúncio (Substitua os IDs do AdSense)';
+            placeholder.textContent = 'Espaço de Anúncio (Aguardando ID do Slot)';
             return placeholder;
         }
 
