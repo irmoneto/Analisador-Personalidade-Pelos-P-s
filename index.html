@@ -10,6 +10,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- INÍCIO: INTEGRAÇÃO GOOGLE ADSENSE -->
+  <!-- 
+  IMPORTANTE: Substitua 'SEU_DATA_AD_CLIENT_AQUI' pelo seu ID de cliente real do AdSense.
+  Este script carrega a biblioteca do AdSense.
+  -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=SEU_DATA_AD_CLIENT_AQUI" crossorigin="anonymous"></script>
+  <!-- FIM: INTEGRAÇÃO GOOGLE ADSENSE -->
+
   <style>
     body { font-family: 'Inter', sans-serif; }
     /* Esconde todos os containers por padrão */
@@ -129,6 +138,10 @@
         #final-report-block .action-buttons {
             display: none;
         }
+        /* Esconde o anúncio na impressão */
+        .ads-container {
+            display: none;
+        }
     }
 
     /* Estilo para a notificação de cópia */
@@ -193,6 +206,12 @@
     <!-- Bloco de Personalização (Novo Bloco) -->
     <div id="personalization-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-2 border-dashed border-gray-300 text-center transition-all duration-300 step-container">
         
+        <!-- INÍCIO: Anúncio no Bloco de Personalização -->
+        <div id="ads-personalization" class="ads-container mb-6">
+            <!-- Container do Anúncio (Será preenchido via JavaScript) -->
+        </div>
+        <!-- FIM: Anúncio no Bloco de Personalização -->
+
         <!-- Ajuste para centralizar o cabeçalho e empilhar no mobile -->
         <div class="flex flex-col sm:flex-row items-center justify-center sm:mb-6 mb-4">
             <!-- IMAGEM DE BOAS VINDAS (Tamanho ajustado para largura: 150px, altura: 100px) -->
@@ -619,7 +638,13 @@
         <div id="expert-analysis-result" class="prose max-w-none text-gray-800 leading-relaxed bg-gray-50 p-6 sm:p-8 rounded-lg border-l-4 border-green-400">
             Aguardando os dados para gerar o relatório...
         </div>
-    
+        
+        <!-- INÍCIO: Anúncio no Bloco de Relatório Final -->
+        <div id="ads-final-report" class="ads-container mt-6 mb-4">
+            <!-- Container do Anúncio (Será preenchido via JavaScript) -->
+        </div>
+        <!-- FIM: Anúncio no Bloco de Relatório Final -->
+
         <!-- CTA para Página de Vendas (Melhor margem para mobile/desktop) -->
         <div class="mt-8 mb-4 text-center">
             <h4 class="text-xl font-bold text-gray-800 mb-4">Quer saber mais sobre o seu pé e como ele revela sua personalidade?</h4>
@@ -716,6 +741,52 @@
   <div id="copy-notification">Relatório copiado para a área de transferência!</div>
 
   <script>
+    // --- Variáveis de Configuração do AdSense ---
+    // IMPORTANTE: SUBSTITUA ESTES VALORES PELOS SEUS REAIS
+    const AD_CLIENT_ID = "SEU_DATA_AD_CLIENT_AQUI"; 
+    const AD_SLOT_ID = "SEU_DATA_AD_SLOT_AQUI"; 
+    
+    // Função para criar o contêiner do anúncio
+    function createAdContainer() {
+        if (!AD_CLIENT_ID.includes('pub-') || !AD_SLOT_ID) {
+            console.warn("AD WARNING: IDs do AdSense não configurados. Usando um placeholder.");
+            const placeholder = document.createElement('div');
+            placeholder.className = 'w-full h-24 bg-gray-200 flex items-center justify-center text-gray-600 text-xs rounded-lg';
+            placeholder.textContent = 'Espaço de Anúncio (Substitua os IDs do AdSense)';
+            return placeholder;
+        }
+
+        const ins = document.createElement('ins');
+        ins.className = 'adsbygoogle';
+        ins.style.display = 'block';
+        ins.style.textAlign = 'center';
+        ins.setAttribute('data-ad-client', AD_CLIENT_ID);
+        ins.setAttribute('data-ad-slot', AD_SLOT_ID);
+        ins.setAttribute('data-ad-format', 'auto');
+        ins.setAttribute('data-full-width-responsive', 'true');
+
+        // Adiciona a tag <script> que dispara a renderização
+        const script = document.createElement('script');
+        script.textContent = '(adsbygoogle = window.adsbygoogle || []).push({});';
+
+        const container = document.createElement('div');
+        container.appendChild(ins);
+        container.appendChild(script);
+        
+        return container;
+    }
+    
+    // Função para renderizar o anúncio em um ID de contêiner específico
+    function renderAd(containerId) {
+        const container = document.getElementById(containerId);
+        if (container) {
+            // Limpa o contêiner e insere o novo anúncio
+            container.innerHTML = '';
+            container.appendChild(createAdContainer());
+        }
+    }
+    // ----------------------------------------------------------------
+    
     document.addEventListener('DOMContentLoaded', () => {
       // --- ELEMENTOS HTML ---
       const appMainContent = document.getElementById('app-main-content');
@@ -899,7 +970,7 @@
           // Garante que a string termine com um ponto final, a menos que já termine com ?, ! ou .
           if (!str) return str;
           const trimmed = str.trim();
-          if (/[.?!]$/.test(trimmed)) {
+          if (/[.?!]$/g.test(trimmed)) {
               return trimmed;
           }
           return trimmed + '.';
@@ -1055,6 +1126,14 @@
       function showBlock(blockToShow) {
         const allBlocks = [splashScreen, personalizationBlock, uploadBlock, cameraBlock, shapeInstructionBlock, ratioInstructionBlock, measurementBlock, shapeResultBlock, ratioResultBlock, nailsQuestionBlock, personalQuestionsBlock, finalReportBlock, previewBlock, legalDocumentsBlock];
         
+        // NOVO: Renderiza anúncios ao mostrar o bloco de Personalização ou Relatório Final
+        if (blockToShow === personalizationBlock) {
+            renderAd('ads-personalization');
+        } else if (blockToShow === finalReportBlock) {
+            renderAd('ads-final-report');
+        }
+        // FIM NOVO
+
         // CORREÇÃO: Força parada da câmera, pois o bloco "camera-block" NÃO será mais usado para capturar
         stopCamera(); 
 
@@ -1148,8 +1227,6 @@
           // Lógica anterior (que você pediu para restaurar, mas ajustei para aceitar o caso L1=57, L2=37, L5=44)
           // O L5 ser maior que L3 ou L2 (como no caso do Grego/Romano) quebrava o isEgyptianHarmonic.
           // Para o Egípcio, o Dedão (L1) deve ser o dominante, e L1 > L2 é a regra principal.
-          // L1 > L2 deve ser o principal, e a progressão de queda deve ser percebida
-          
           // Permite que L5 seja mais longo que L3 (o que é comum) mas prioriza a dominância de L1
           if (L1 > L2 * 1.07 && L1 > L5) {
               // Verifica se a proporção de caída é "consistente" (não precisa ser harmônica estrita)
@@ -1187,7 +1264,14 @@
       function classifyShape() {
         if (points.length < 4) return;
         const refY = canvas.height / 2;
-        const [L1, L2, L3, L5] = points.map(p => Math.abs(refY - p.y));
+        // As coordenadas Y são usadas para medir o comprimento (distância da ponta à linha de referência)
+        // L1 (Ponta do Hálux), L2 (Ponta do 2º Dedo), L3 (Ponta do 3º Dedo), L5 (Ponta do 5º Dedo)
+        const [L1, L2, L3, L5] = [
+            Math.abs(points[0].y - refY), // L1
+            Math.abs(points[1].y - refY), // L2
+            Math.abs(points[2].y - refY), // L3
+            Math.abs(points[3].y - refY)  // L5
+        ];
         let shapeText, shapeEmoji, reasoning;
         
         // 1. Prioridade: Egípcio
@@ -1212,7 +1296,11 @@
         Object.assign(document.getElementById('shape-text'), { textContent: shapeText });
         Object.assign(document.getElementById('classification-reasoning'), { textContent: reasoning });
         Object.assign(document.getElementById('shape-result-image'), { src: imageUrl });
-        ['L1', 'L2', 'L3', 'L5'].forEach((id, i) => { document.getElementById(`${id}-value`).textContent = `${[L1,L2,L3,L5][i].toFixed(2)} px`; });
+        ['L1', 'L2', 'L3', 'L5'].forEach((id, i) => { 
+            // Os valores no array points para a análise de formato são: L1, L2, L3, L5
+            const values = [L1, L2, L3, L5];
+            document.getElementById(`${id}-value`).textContent = `${values[i].toFixed(2)} px`; 
+        });
         showBlock(shapeResultBlock);
       }
 
@@ -1228,8 +1316,9 @@
       function calculateAndDisplayResult() {
         if (currentAnalysisPhase === 'ratio') {
           if (points.length < 3) return;
-          const toeLength = Math.hypot(points[1].x - points[0].x, points[1].y - points[0].y);
-          const footLength = Math.hypot(points[2].x - points[1].x, points[2].y - points[1].y);
+          // pontos: [Ponta 2º, Base 2º, Fim Peito]
+          const toeLength = Math.hypot(points[1].x - points[0].x, points[1].y - points[0].y); // Distância Ponta -> Base
+          const footLength = Math.hypot(points[2].x - points[1].x, points[2].y - points[1].y); // Distância Base -> Peito
           const ratio = footLength / toeLength;
           const classification = classifyRatio(ratio);
           ratioResultText = classification.text.startsWith('Normais para') ? classification.text : classification.text.replace(/Dedos | \(.*\)/g, '').trim();
@@ -1317,7 +1406,9 @@
               ctx.beginPath(); ctx.moveTo(points[index-1].x, points[index-1].y); ctx.lineTo(point.x, point.y);
               Object.assign(ctx, { strokeStyle: 'rgba(0, 0, 255, 0.3)', lineWidth: 2 }).stroke();
             }
-            Object.assign(ctx, { fillStyle: '#ff0000', font: 'bold 12px Arial' }).fillText(`${Math.abs(refY - point.y).toFixed(0)}px`, point.x + 10, (point.y + refY) / 2);
+            // NOVO: Usa o valor real do ponto da medição do formato
+            const lengthValue = Math.abs(point.y - refY).toFixed(0);
+            Object.assign(ctx, { fillStyle: '#ff0000', font: 'bold 12px Arial' }).fillText(`${lengthValue}px`, point.x + 10, (point.y + refY) / 2);
           } else if (currentAnalysisPhase === 'ratio' && points.length >= 2) {
             ctx.beginPath(); ctx.moveTo(points[0].x, points[0].y); ctx.lineTo(points[1].x, points[1].y);
             Object.assign(ctx, { strokeStyle: '#ef4444', lineWidth: 3 }).stroke();
@@ -1414,6 +1505,7 @@
         const labels = currentAnalysisPhase === 'shape' ? shapeStepLabels : ratioStepLabels;
         if (currentStep > labels.length) return;
         const rect = canvas.getBoundingClientRect();
+        // A lógica de points.push é a mesma para ambos os casos: capturar a coordenada (x, y) do clique no canvas.
         points.push({ x: (e.clientX - rect.left) * (canvas.width / rect.width), y: (e.clientY - rect.top) * (canvas.height / rect.height) });
         currentStep++; drawCanvas(); updateUI();
         if (currentStep > labels.length) {
@@ -1574,6 +1666,11 @@
         const originalActionButtonsDisplay = actionButtons ? actionButtons.style.display : null;
         if (actionButtons) actionButtons.style.display = 'none';
         
+        // NOVO: Esconde o container de anúncios (que não devem aparecer no PDF)
+        const adContainer = document.getElementById('ads-final-report');
+        const originalAdContainerDisplay = adContainer ? adContainer.style.display : null;
+        if (adContainer) adContainer.style.display = 'none';
+
         // Oculta o container principal para evitar scrollbar dupla e conflitos de layout
         const originalAppMainDisplay = appMainContent.style.display;
         appMainContent.style.display = 'none';
@@ -1625,6 +1722,9 @@
             // 5.3. Restaura os botões de ação
             if (actionButtons) actionButtons.style.display = originalActionButtonsDisplay;
             
+            // NOVO: Restaura o container de anúncios
+            if (adContainer) adContainer.style.display = originalAdContainerDisplay;
+
             // 5.4. Restaura o container principal
             appMainContent.style.display = originalAppMainDisplay;
 
@@ -1658,6 +1758,10 @@
       
       // Chamada da função de setup na inicialização e ao mudar de tela
       document.addEventListener('DOMContentLoaded', setupEnvironment);
+      
+      // NOVO: RENDERIZA O ANÚNCIO NA TELA INICIAL (SPLASH SCREEN) ASSIM QUE O DOM CARREGA
+      // Não é necessário pois a tela de Personalização renderizará o anúncio.
+      // renderAd('ads-personalization'); 
     });
   </script>
 </body>
