@@ -7,7 +7,8 @@
   <!-- NOVO: Meta Tag de Verificação do Google AdSense -->
   <meta name="google-adsense-account" content="ca-pub-2957847231347233">
   
-  <!-- INÍCIO: INTEGRAÇÃO GOOGLE ADSENSE (ID DE CLIENTE INSERIDO) -->
+  <!-- INÍCIO: INTEGRAÇÃO GOOGLE ADSENSE (CÓDIGO DE AUTO ADS INSERIDO) -->
+  <!-- ESTE CÓDIGO PERMITE QUE O GOOGLE EXIBA ANÚNCIOS AUTOMATICAMENTE -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2957847231347233" crossorigin="anonymous"></script>
   <!-- FIM: INTEGRAÇÃO GOOGLE ADSENSE -->
   
@@ -135,13 +136,17 @@
             margin: 0;
             padding: 0;
         }
-        /* Esconde os botões na impressão */
+        /* Esconde os botões e os anúncios na impressão */
         #final-report-block .action-buttons {
             display: none;
         }
-        /* Esconde o anúncio na impressão */
         .ads-container {
             display: none;
+        }
+        
+        /* NOVO: CSS para Forçar Quebras de Página no PDF/Impressão */
+        .pdf-page-break-after {
+            page-break-after: always;
         }
     }
 
@@ -207,11 +212,8 @@
     <!-- Bloco de Personalização (Novo Bloco) -->
     <div id="personalization-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-2 border-dashed border-gray-300 text-center transition-all duration-300 step-container">
         
-        <!-- INÍCIO: Anúncio no Bloco de Personalização -->
-        <div id="ads-personalization" class="ads-container mb-6">
-            <!-- Container do Anúncio (Será preenchido via JavaScript) -->
-        </div>
-        <!-- FIM: Anúncio no Bloco de Personalização -->
+        <!-- REMOVIDO: Antigo container de anúncios manuais. Agora o Auto Ads insere automaticamente. -->
+        <!-- <div id="ads-personalization" class="ads-container mb-6"></div> -->
 
         <!-- Ajuste para centralizar o cabeçalho e empilhar no mobile -->
         <div class="flex flex-col sm:flex-row items-center justify-center sm:mb-6 mb-4">
@@ -600,7 +602,7 @@
 <div id="final-report-block" class="bg-white p-8 sm:p-12 rounded-xl shadow-lg border-2 border-green-300 transition-all duration-300 step-container">
     
     <!-- Título -->
-    <div class="text-center mb-10 pb-6 border-b border-gray-200">
+    <div class="text-center mb-10 pb-6 border-b border-gray-200 pdf-page-break-after">
         <h2 class="text-2xl sm:text-3xl font-bold text-teal-700 mb-3">Relatório da ANÁLISE DOS PÉS - By @IrmoNeto</h2>
         <p class="text-xl text-gray-700">Para: <span id="report-target-name" class="font-bold text-teal-600"></span></p>
     </div>
@@ -631,22 +633,23 @@
         </div>
     </div>
 
-    <!-- Container Inferior: Análise de Personalidade e CTA (Layout ajustado para celular) -->
+    <!-- PONTO DE QUEBRA DE PÁGINA 1 (após Resumo e Foto) -->
+    <!-- Adicionamos uma div separadora para forçar a quebra, garantindo que o cabeçalho não vá junto -->
+    <div class="pdf-page-break-after"></div>
+
+    <!-- Container Inferior: Análise de Personalidade (Começa a Página 2) -->
     <div class="flex flex-col space-y-8">
         <h3 class="text-2xl font-extrabold text-gray-800 mb-4 text-center">Relatório de Análise da Personalidade pelos Pés</h3>
         
-        <!-- Bloco de Análise Detalhada (Melhor espaçamento interno) -->
+        <!-- Bloco de Análise Detalhada -->
         <div id="expert-analysis-result" class="prose max-w-none text-gray-800 leading-relaxed bg-gray-50 p-6 sm:p-8 rounded-lg border-l-4 border-green-400">
             Aguardando os dados para gerar o relatório...
         </div>
         
-        <!-- INÍCIO: Anúncio no Bloco de Relatório Final -->
-        <div id="ads-final-report" class="ads-container mt-6 mb-4">
-            <!-- Container do Anúncio (Será preenchido via JavaScript) -->
-        </div>
-        <!-- FIM: Anúncio no Bloco de Relatório Final -->
+        <!-- PONTO DE QUEBRA DE PÁGINA 2 (para garantir que a Conclusão e CTA fiquem na Página 3) -->
+        <div class="pdf-page-break-after"></div>
 
-        <!-- CTA para Página de Vendas (Link Atualizado) -->
+        <!-- CTA para Página de Vendas (Inicia a Página 3) -->
         <div class="mt-8 mb-4 text-center">
             <h4 class="text-xl font-bold text-gray-800 mb-4">Quer saber mais sobre o seu pé e como ele revela sua personalidade?</h4>
             <a href="https://irmoneto.github.io/INFOPRODUTOS-BY-IRMONETO/" target="_blank" class="inline-flex items-center justify-center bg-yellow-500 text-white py-3 px-8 rounded-full font-bold shadow-xl hover:bg-yellow-600 transition-colors transform hover:scale-[1.03] text-lg w-full sm:w-auto">
@@ -742,47 +745,34 @@
   <div id="copy-notification">Relatório copiado para a área de transferência!</div>
 
   <script>
-    // --- Variáveis de Configuração do AdSense ---
-    // ID DE CLIENTE JÁ INSERIDO
-    const AD_CLIENT_ID = "ca-pub-2957847231347233"; 
-    // AGUARDANDO ID DO SLOT (data-ad-slot) - **ESTE PRECISA SER SUBSTITUÍDO**
-    const AD_SLOT_ID = "SEU_DATA_AD_SLOT_AQUI"; 
     
-    // Função para criar o contêiner do anúncio
+    // Função para criar o contêiner do anúncio (Mantida, mas retorna uma ins do Auto Ads)
     function createAdContainer() {
-        if (!AD_CLIENT_ID.includes('pub-') || !AD_SLOT_ID || AD_SLOT_ID === "SEU_DATA_AD_SLOT_AQUI") {
-            console.warn("AD WARNING: ID do Slot do AdSense ainda não configurado. Usando um placeholder.");
-            const placeholder = document.createElement('div');
-            placeholder.className = 'w-full h-24 bg-gray-200 flex items-center justify-center text-gray-600 text-xs rounded-lg';
-            placeholder.textContent = 'Espaço de Anúncio (Aguardando ID do Slot)';
-            return placeholder;
-        }
-
+        // Para o Auto Ads, não precisamos de um slot, apenas da tag <ins> vazia que o script do AdSense encontrará.
         const ins = document.createElement('ins');
         ins.className = 'adsbygoogle';
         ins.style.display = 'block';
-        ins.style.textAlign = 'center';
-        ins.setAttribute('data-ad-client', AD_CLIENT_ID);
-        ins.setAttribute('data-ad-slot', AD_SLOT_ID);
+        ins.setAttribute('data-ad-client', 'ca-pub-2957847231347233'); // Seu ID de Cliente
         ins.setAttribute('data-ad-format', 'auto');
         ins.setAttribute('data-full-width-responsive', 'true');
-
-        // Adiciona a tag <script> que dispara a renderização
-        const script = document.createElement('script');
-        script.textContent = '(adsbygoogle = window.adsbygoogle || []).push({});';
+        
+        // Coloca a tag vazia no array de push para que o script do Auto Ads a detecte
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
 
         const container = document.createElement('div');
+        container.className = 'my-4 w-full text-center';
         container.appendChild(ins);
-        container.appendChild(script);
         
         return container;
     }
     
     // Função para renderizar o anúncio em um ID de contêiner específico
     function renderAd(containerId) {
+        // NOTA: Com Auto Ads, a inserção manual pode ser redundante, mas mantemos o código
+        // para forçar a visibilidade em pontos chave, caso o AdSense não detecte o ponto.
         const container = document.getElementById(containerId);
         if (container) {
-            // Limpa o contêiner e insere o novo anúncio
+            // Limpa o contêiner e insere a tag para que o Auto Ads a preencha
             container.innerHTML = '';
             container.appendChild(createAdContainer());
         }
@@ -1060,17 +1050,17 @@
           if (joanetes === 'Não' && calos === 'Não') {
                // Cenário específico de ausência de ambas as marcas, conforme solicitado
                joanetesCalosBlock = `
-                 <p class="mt-3">${joanetesDesc}</p>
-                 <p class="mt-3">${calosDesc}</p>
-                 <p class="mt-2 text-gray-600 italic">É importante saber que essas características, quando vistas nos pés, indicam conflitos dolorosos e observá-las é o primeiro passo para suavizar, acolher e ultrapassá-los.</p>
+                 <p class="mt-1">${joanetesDesc}</p>
+                 <p class="mt-1">${calosDesc}</p>
+                 <p class="mt-1 text-gray-600 italic">É importante saber que essas características, quando vistas nos pés, indicam conflitos dolorosos e observá-las é o primeiro passo para suavizar, acolher e ultrapassá-los.</p>
                `;
           } else {
                // Cenários onde pelo menos uma marca está presente (Sim para Joanetes e/ou Calos, ou Não/Sim) - ATUALIZADO
                joanetesCalosBlock = `
-                 <p class="mt-3">${joanetesDesc}</p>
-                 <p class="mt-3">${calosDesc}</p>
-                 <p class="mt-2 text-gray-600 italic">Essas marcas nos pés mostram pontos onde o corpo endureceu para manter controle, resistir ou suportar o peso emocional não expresso. São sinais de força usada em excesso, quando o corpo precisou se defender em vez de fluir.</p>
-                 <p class="mt-2 text-gray-600 italic">Observar essas marcas com atenção é o primeiro passo para transformar o padrão de onde há rigidez e liberar o que foi retido — seja a emoção não expressa ou o medo de se soltá-las.</p>
+                 <p class="mt-1">${joanetesDesc}</p>
+                 <p class="mt-1">${calosDesc}</p>
+                 <p class="mt-1 text-gray-600 italic">Essas marcas nos pés mostram pontos onde o corpo endureceu para manter controle, resistir ou suportar o peso emocional não expresso. São sinais de força usada em excesso, quando o corpo precisou se defender em vez de fluir.</p>
+                 <p class="mt-1 text-gray-600 italic">Observar essas marcas com atenção é o primeiro passo para transformar o padrão de onde há rigidez e liberar o que foi retido — seja a emoção não expressa ou o medo de se soltá-las.</p>
                `;
           }
 
@@ -1086,8 +1076,11 @@
           // Tamanho das Unhas (CORRIGIDO)
           report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Tamanho das Unhas</h4><p class="mt-1">Suas unhas <strong>${nailsKey}</strong> mostram como você constrói e lida com suas verdades, geralmente, <em>${nailsDesc}</em></p><p class="mt-1 text-gray-600 italic text-sm">Esse é seu ponto de equilíbrio entre o tradicional e o novo. Toda crença é um abrigo, mas vira prisão se não tiver portas abertas.</p></div>`;
           
-          // Sensibilidade e Relação com o Corpo
-          report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Sensibilidade e Relação com o Corpo</h4>`;
+          // Joanetes e Calos (CORRIGIDO - mantido como mt-2 para dar um leve respiro no PDF)
+          report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Joanetes e Calos</h4>${joanetesCalosBlock}</div>`; 
+
+          // Sensibilidade e Relação com o Corpo (Corrigido para usar mt-2)
+          report += `<div class="mt-2 pdf-page-break-after-if-short"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Sensibilidade e Relação com o Corpo</h4>`;
           if (tickles === 'Sim') {
             // CORREÇÃO 2: Remove 'que indicam um...' e os reticências
             let ticklesClean = (analysisData['Cócegas nos Pés'][tickles] || '').replace(/Indicam um/i, '').trim();
@@ -1101,12 +1094,9 @@
           report += `<p class="mt-1">Sua relação com os pés <strong>${relationDisplay}</strong> reflete seu grau de integração com o corpo e emoções, pois <em>${relationDesc}</em></p>`;
           report += `<p class="mt-1 text-gray-600 italic text-sm">Quando há desconforto, há um convite para o autoconhecimento, pois o corpo é o palco onde a psique e o espírito se encontram.</p></div>`;
           
-          // Joanetes e Calos
-          report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Joanetes e Calos</h4>${joanetesCalosBlock}</div>`; // Título e Conteúdo atualizados
-
           // Pontos Fortes e Desafiadores
-          // CORREÇÃO 1: Remoção do "a" duplicado. Isso é resolvido garantindo que o `connector` seja anexado diretamente ao texto `challengingPointsList` sem espaços extras.
-          report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Pontos Fortes e Desafiadores</h4><p class="mt-1">Seus <strong>pontos fortes</strong> — <em>${strongPointsDesc}</em> — não são só talentos; são sabedoria já instalada.</p><p class="mt-1">O segredo não é lutar contra suas dificuldades, mas usar essa base como trampolim para lidar com seus <strong>pontos desafiadores</strong>${challengingPointsFormatted}.</p></div>`;
+          // Aplicamos a quebra aqui para forçar a Página 3 (com a conclusão)
+          report += `<div class="mt-2 pdf-page-break-after"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Pontos Fortes e Desafiadores</h4><p class="mt-1">Seus <strong>pontos fortes</strong> — <em>${strongPointsDesc}</em> — não são só talentos; são sabedoria já instalada.</p><p class="mt-1">O segredo não é lutar contra suas dificuldades, mas usar essa base como trampolim para lidar com seus <strong>pontos desafiadores</strong>${challengingPointsFormatted}.</p></div>`;
           
           // Conclusão
           report += `<div class="mt-3 pt-2 border-t-2 border-green-200"><p class="font-semibold text-gray-700 text-sm">Sabia que a fórmula está no equilíbrio entre ação, emoção e pensamento? Mais uma coisa, use seu instinto não como alarme, mas como radar para a beleza e verdades ainda escondidas.</p><p class="mt-2 text-gray-600 italic text-sm">E lembre-se sempre que puder, que você não é uma máquina, é um organismo pulsante e a vida quer fluir através de você, sem bloqueios. A compreensão sobre si é o primeiro passo para a transformação real, afinal, levar a vida a sério demais é o verdadeiro pecado contra o viver a vida e compreender como você pensa, sente e age não é só uma jornada, é a jornada mais extraordinária de todas!</p></div>`;
@@ -1129,6 +1119,7 @@
         const allBlocks = [splashScreen, personalizationBlock, uploadBlock, cameraBlock, shapeInstructionBlock, ratioInstructionBlock, measurementBlock, shapeResultBlock, ratioResultBlock, nailsQuestionBlock, personalQuestionsBlock, finalReportBlock, previewBlock, legalDocumentsBlock];
         
         // NOVO: Renderiza anúncios ao mostrar o bloco de Personalização ou Relatório Final
+        // Com Auto Ads, a chamada renderAd() apenas insere a tag vazia, e o script do AdSense a preenche.
         if (blockToShow === personalizationBlock) {
             renderAd('ads-personalization');
         } else if (blockToShow === finalReportBlock) {
@@ -1669,9 +1660,10 @@
         if (actionButtons) actionButtons.style.display = 'none';
         
         // NOVO: Esconde o container de anúncios (que não devem aparecer no PDF)
-        const adContainer = document.getElementById('ads-final-report');
-        const originalAdContainerDisplay = adContainer ? adContainer.style.display : null;
-        if (adContainer) adContainer.style.display = 'none';
+        // Isso é importante porque mesmo com Auto Ads, o container manual pode ser forçado.
+        const adPersonalizationContainer = document.getElementById('ads-personalization');
+        const originalAdPersonalizationDisplay = adPersonalizationContainer ? adPersonalizationContainer.style.display : null;
+        if (adPersonalizationContainer) adPersonalizationContainer.style.display = 'none';
 
         // Oculta o container principal para evitar scrollbar dupla e conflitos de layout
         const originalAppMainDisplay = appMainContent.style.display;
@@ -1725,7 +1717,7 @@
             if (actionButtons) actionButtons.style.display = originalActionButtonsDisplay;
             
             // NOVO: Restaura o container de anúncios
-            if (adContainer) adContainer.style.display = originalAdContainerDisplay;
+            if (adPersonalizationContainer) adPersonalizationContainer.style.display = originalAdPersonalizationDisplay;
 
             // 5.4. Restaura o container principal
             appMainContent.style.display = originalAppMainDisplay;
@@ -1761,9 +1753,6 @@
       // Chamada da função de setup na inicialização e ao mudar de tela
       document.addEventListener('DOMContentLoaded', setupEnvironment);
       
-      // NOVO: RENDERIZA O ANÚNCIO NA TELA INICIAL (SPLASH SCREEN) ASSIM QUE O DOM CARREGA
-      // Não é necessário pois a tela de Personalização renderizará o anúncio.
-      // renderAd('ads-personalization'); 
     });
   </script>
 </body>
