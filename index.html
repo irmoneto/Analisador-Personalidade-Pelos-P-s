@@ -148,6 +148,11 @@
         .pdf-page-break-after {
             page-break-after: always;
         }
+        
+        /* Correção para garantir que o elemento comece em uma nova página */
+        .pdf-page-break-before {
+            page-break-before: always;
+        }
     }
 
     /* Estilo para a notificação de cópia */
@@ -634,8 +639,9 @@
     </div>
 
     <!-- PONTO DE QUEBRA DE PÁGINA 1 (após Resumo e Foto) -->
-    <!-- Adicionamos uma div separadora para forçar a quebra, garantindo que o cabeçalho não vá junto -->
-    <div class="pdf-page-break-after"></div>
+    <!-- Este ponto foi movido para o final do bloco de título/resumo na função generateFinalReportText, 
+         para que as páginas 2 e 3 sejam o conteúdo da análise -->
+    
 
     <!-- Container Inferior: Análise de Personalidade (Começa a Página 2) -->
     <div class="flex flex-col space-y-8">
@@ -647,7 +653,7 @@
         </div>
         
         <!-- PONTO DE QUEBRA DE PÁGINA 2 (para garantir que a Conclusão e CTA fiquem na Página 3) -->
-        <div class="pdf-page-break-after"></div>
+        <!-- NOTA: A quebra está sendo aplicada DENTRO do HTML gerado pelo JS (generateFinalReportText) -->
 
         <!-- CTA para Página de Vendas (Inicia a Página 3) -->
         <div class="mt-8 mb-4 text-center">
@@ -1050,58 +1056,54 @@
           if (joanetes === 'Não' && calos === 'Não') {
                // Cenário específico de ausência de ambas as marcas, conforme solicitado
                joanetesCalosBlock = `
-                 <p class="mt-1">${joanetesDesc}</p>
-                 <p class="mt-1">${calosDesc}</p>
-                 <p class="mt-1 text-gray-600 italic">É importante saber que essas características, quando vistas nos pés, indicam conflitos dolorosos e observá-las é o primeiro passo para suavizar, acolher e ultrapassá-los.</p>
+                 <p class="mt-1 text-sm">${joanetesDesc}</p>
+                 <p class="mt-1 text-sm">${calosDesc}</p>
+                 <p class="mt-1 text-gray-600 italic text-xs">É importante saber que essas características, quando vistas nos pés, indicam conflitos dolorosos e observá-las é o primeiro passo para suavizar, acolher e ultrapassá-los.</p>
                `;
           } else {
                // Cenários onde pelo menos uma marca está presente (Sim para Joanetes e/ou Calos, ou Não/Sim) - ATUALIZADO
                joanetesCalosBlock = `
-                 <p class="mt-1">${joanetesDesc}</p>
-                 <p class="mt-1">${calosDesc}</p>
-                 <p class="mt-1 text-gray-600 italic">Essas marcas nos pés mostram pontos onde o corpo endureceu para manter controle, resistir ou suportar o peso emocional não expresso. São sinais de força usada em excesso, quando o corpo precisou se defender em vez de fluir.</p>
-                 <p class="mt-1 text-gray-600 italic">Observar essas marcas com atenção é o primeiro passo para transformar o padrão de onde há rigidez e liberar o que foi retido — seja a emoção não expressa ou o medo de se soltá-las.</p>
+                 <p class="mt-1 text-sm">${joanetesDesc}</p>
+                 <p class="mt-1 text-sm">${calosDesc}</p>
+                 <p class="mt-1 text-gray-600 italic text-xs">Essas marcas nos pés mostram pontos onde o corpo endureceu para manter controle, resistir ou suportar o peso emocional não expresso. São sinais de força usada em excesso, quando o corpo precisou se defender em vez de fluir.</p>
+                 <p class="mt-1 text-gray-600 italic text-xs">Observar essas marcas com atenção é o primeiro passo para transformar o padrão de onde há rigidez e liberar o que foi retido — seja a emoção não expressa ou o medo de se soltá-las.</p>
                `;
           }
 
 
           let report = `<p class="mb-2"><strong>${clientName}</strong>, seus pés revelam muito sobre como você pensa, sente e age no mundo. Enquanto a mente racionaliza, os pés simplesmente mostram a verdade. Vamos juntos entender essa linguagem silenciosa?</p>`;
           
-          // Formato do Pé (CORRIGIDO)
+          // Formato do Pé (PÁGINA 2, PARTE 1)
           report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Formato do Pé</h4><p class="mt-1">Seu formato de pé <strong>${shape}</strong> traz a primeira pista sobre sua estrutura de pensamento, com tendência a <em>${shapeDesc}</em></p><p class="mt-1 text-gray-600 italic text-sm">Isso não é certo nem errado — é seu jeito único de organizar e interagir com o mundo.</p></div>`;
           
-          // Tamanho dos Dedos (CORRIGIDO)
+          // Tamanho dos Dedos 
           report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Tamanho dos Dedos</h4><p class="mt-1">Já seus dedos <strong>${ratioKey}</strong> revelam sua tendência inata para <em>${ratioDesc}</em></p><p class="mt-1 text-gray-600 italic text-sm">Sua força está justamente nessa forma de processar a vida. O convite é dançar no ritmo que equilibre sentir, pensar e agir — um pouco melhor a cada dia.</p></div>`;
           
-          // Tamanho das Unhas (CORRIGIDO)
-          report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Tamanho das Unhas</h4><p class="mt-1">Suas unhas <strong>${nailsKey}</strong> mostram como você constrói e lida com suas verdades, geralmente, <em>${nailsDesc}</em></p><p class="mt-1 text-gray-600 italic text-sm">Esse é seu ponto de equilíbrio entre o tradicional e o novo. Toda crença é um abrigo, mas vira prisão se não tiver portas abertas.</p></div>`;
+          // Tamanho das Unhas
+          report += `<div class="mt-1"><h4 class="text-base font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Tamanho das Unhas</h4><p class="mt-1 text-sm">Suas unhas <strong>${nailsKey}</strong> mostram como você constrói e lida com suas verdades, geralmente, <em>${nailsDesc}</em></p><p class="mt-1 text-gray-600 italic text-xs">Esse é seu ponto de equilíbrio entre o tradicional e o novo. Toda crença é um abrigo, mas vira prisão se não tiver portas abertas.</p></div>`;
           
-          // Joanetes e Calos (CORRIGIDO - mantido como mt-2 para dar um leve respiro no PDF)
-          report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Joanetes e Calos</h4>${joanetesCalosBlock}</div>`; 
+          // Joanetes e Calos
+          report += `<div class="mt-1"><h4 class="text-base font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Joanetes e Calos</h4>${joanetesCalosBlock}</div>`; 
 
-          // Sensibilidade e Relação com o Corpo (Corrigido para usar mt-2)
-          report += `<div class="mt-2 pdf-page-break-after-if-short"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Sensibilidade e Relação com o Corpo</h4>`;
+          // Sensibilidade e Relação com o Corpo
+          report += `<div class="mt-1"><h4 class="text-base font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Sensibilidade e Relação com o Corpo</h4>`;
           if (tickles === 'Sim') {
-            // CORREÇÃO 2: Remove 'que indicam um...' e os reticências
             let ticklesClean = (analysisData['Cócegas nos Pés'][tickles] || '').replace(/Indicam um/i, '').trim();
-            // A frase no relatório é: "A sensibilidade quanto às cócegas é um sinal refinado que indicam um... [restante da descrição]".
-            // Substituímos a frase do template para remover a repetição e a reticência
-            report += `<p class="mt-1">A sensibilidade quanto às cócegas é um sinal refinado que <em>${formatText(lowerCaseFirst(ticklesClean))}</em></p>`;
+            report += `<p class="mt-1 text-sm">A sensibilidade quanto às cócegas é um sinal refinado que <em>${formatText(lowerCaseFirst(ticklesClean))}</em></p>`;
           } else {
-             report += `<p class="mt-1">A ausência de cócegas é um sinal de estabilidade que <em>${formatText(lowerCaseFirst(analysisData['Cócegas nos Pés'][tickles] || ''))}</em></p>`;
+             report += `<p class="mt-1 text-sm">A ausência de cócegas é um sinal de estabilidade que <em>${formatText(lowerCaseFirst(analysisData['Cócegas nos Pés'][tickles] || ''))}</em></p>`;
           }
           // Relação com os Pés (CORRIGIDO)
-          report += `<p class="mt-1">Sua relação com os pés <strong>${relationDisplay}</strong> reflete seu grau de integração com o corpo e emoções, pois <em>${relationDesc}</em></p>`;
-          report += `<p class="mt-1 text-gray-600 italic text-sm">Quando há desconforto, há um convite para o autoconhecimento, pois o corpo é o palco onde a psique e o espírito se encontram.</p></div>`;
+          report += `<p class="mt-1 text-sm">Sua relação com os pés <strong>${relationDisplay}</strong> reflete seu grau de integração com o corpo e emoções, pois <em>${relationDesc}</em></p>`;
+          report += `<p class="mt-1 text-gray-600 italic text-xs">Quando há desconforto, há um convite para o autoconhecimento, pois o corpo é o palco onde a psique e o espírito se encontram.</p></div>`;
           
           // Pontos Fortes e Desafiadores
-          // Aplicamos a quebra aqui para forçar a Página 3 (com a conclusão)
-          report += `<div class="mt-2 pdf-page-break-after"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Pontos Fortes e Desafiadores</h4><p class="mt-1">Seus <strong>pontos fortes</strong> — <em>${strongPointsDesc}</em> — não são só talentos; são sabedoria já instalada.</p><p class="mt-1">O segredo não é lutar contra suas dificuldades, mas usar essa base como trampolim para lidar com seus <strong>pontos desafiadores</strong>${challengingPointsFormatted}.</p></div>`;
+          report += `<div class="mt-1"><h4 class="text-base font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Pontos Fortes e Desafiadores</h4><p class="mt-1 text-sm">Seus <strong>pontos fortes</strong> — <em>${strongPointsDesc}</em> — não são só talentos; são sabedoria já instalada.</p><p class="mt-1 text-sm">O segredo não é lutar contra suas dificuldades, mas usar essa base como trampolim para lidar com seus <strong>pontos desafiadores</strong>${challengingPointsFormatted}.</p></div>`;
           
           // Conclusão
-          report += `<div class="mt-3 pt-2 border-t-2 border-green-200"><p class="font-semibold text-gray-700 text-sm">Sabia que a fórmula está no equilíbrio entre ação, emoção e pensamento? Mais uma coisa, use seu instinto não como alarme, mas como radar para a beleza e verdades ainda escondidas.</p><p class="mt-2 text-gray-600 italic text-sm">E lembre-se sempre que puder, que você não é uma máquina, é um organismo pulsante e a vida quer fluir através de você, sem bloqueios. A compreensão sobre si é o primeiro passo para a transformação real, afinal, levar a vida a sério demais é o verdadeiro pecado contra o viver a vida e compreender como você pensa, sente e age não é só uma jornada, é a jornada mais extraordinária de todas!</p></div>`;
+          report += `<div class="mt-2 pt-2 border-t-2 border-green-200"><p class="font-semibold text-gray-700 text-xs">Sabia que a fórmula está no equilíbrio entre ação, emoção e pensamento? Mais uma coisa, use seu instinto não como alarme, mas como radar para a beleza e verdades ainda escondidas.</p><p class="mt-1 text-gray-600 italic text-xs">E lembre-se sempre que puder, que você não é uma máquina, é um organismo pulsante e a vida quer fluir através de você, sem bloqueios. A compreensão sobre si é o primeiro passo para a transformação real, afinal, levar a vida a sério demais é o verdadeiro pecado contra o viver a vida e compreender como você pensa, sente e age não é só uma jornada, é a jornada mais extraordinária de todas!</p></div>`;
           
-          report += `<p class="mt-3 text-right text-sm">Fraternos Abraços!<br><strong>Irmo Zuccato Neto</strong></p>`;
+          report += `<p class="mt-2 text-right text-xs">Fraternos Abraços!<br><strong>Irmo Zuccato Neto</strong></p>`;
           return report;
       }
       
