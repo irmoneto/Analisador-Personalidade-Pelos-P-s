@@ -325,9 +325,16 @@
         <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Instruções para a Análise do Formato</h2>
         <p class="text-gray-600 mb-6">Observe a imagem abaixo para entender onde as marcações das pontas dos dedos devem ser feitas.</p>
         <img src="https://raw.githubusercontent.com/irmoneto/Analisador-Personalidade-Pelos-P-s/main/IMAGENS%20APP/EXEMPLO%20F%20P%C3%89S.PNG" alt="Exemplo de marcação para formato do pé" class="mx-auto rounded-lg shadow-md mb-8 w-full max-w-md h-auto border-2 border-gray-200">
-        <button id="continue-to-shape-measurement" class="bg-blue-600 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-blue-700 cursor-pointer transition-transform duration-200 transform hover:scale-105">
-          Continuar
-        </button>
+        
+        <!-- NOVO: Container de botões com navegação -->
+        <div class="flex justify-center gap-4">
+            <button id="back-from-shape-instruction" class="bg-gray-500 text-white py-3 px-6 rounded-full font-bold shadow-lg hover:bg-gray-600 cursor-pointer transition-transform duration-200 transform hover:scale-105">
+              Voltar (Mudar Foto)
+            </button>
+            <button id="continue-to-shape-measurement" class="bg-blue-600 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-blue-700 cursor-pointer transition-transform duration-200 transform hover:scale-105">
+              Continuar
+            </button>
+        </div>
     </div>
     <!-- Tela de Instruções da Razão Áurea (Etapa 2) -->
     <div id="ratio-instruction-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-2 border-dashed border-yellow-300 text-center transition-all duration-300 step-container">
@@ -349,9 +356,15 @@
         <p class="text-blue-700">Aponte e clique exatamente nos locais indicados acima. Você verá números aparecerem nas marcações.</p>
       </div>
 
-      <button id="continue-to-ratio-measurement" class="bg-red-700 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-red-800 transition-transform duration-200 transform hover:scale-105">
-        Entendi, Continuar
-      </button>
+      <!-- NOVO: Container de botões com navegação -->
+      <div class="flex justify-center gap-4">
+          <button id="back-from-ratio-instruction" class="bg-gray-500 text-white py-3 px-6 rounded-full font-bold shadow-lg hover:bg-gray-600 cursor-pointer transition-transform duration-200 transform hover:scale-105">
+              Voltar (Formato)
+          </button>
+          <button id="continue-to-ratio-measurement" class="bg-red-700 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-red-800 transition-transform duration-200 transform hover:scale-105">
+              Entendi, Continuar
+          </button>
+      </div>
     </div>
 <!-- Medição (Comum para ambas as fases) -->
     <div id="measurement-block" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg transition-all duration-300 step-container">
@@ -367,7 +380,12 @@
         <canvas id="imageCanvas" class="w-full h-auto custom-cursor"></canvas>
       </div>
       <div id="progress-container" class="mt-4 grid grid-cols-4 gap-2"></div>
-      <button id="calculate-button" class="mt-4 w-full bg-blue-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-600 transition-colors hidden">Calcular</button>
+      
+      <!-- NOVO: Container de botões com navegação -->
+      <div class="mt-4 flex flex-col sm:flex-row justify-between gap-4">
+          <button id="back-from-measurement" class="flex-1 bg-gray-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-600 transition-colors">Voltar</button>
+          <button id="calculate-button" class="flex-1 bg-blue-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-600 transition-colors hidden">Calcular</button>
+      </div>
     </div>
     
     <!-- Resultado Formato -->
@@ -489,9 +507,15 @@
             
             <p id="nails-error" class="text-red-500 text-sm mt-4 hidden">Por favor, selecione uma opção para prosseguir.</p>
 
-            <button id="continue-to-personal-questions" class="bg-purple-600 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-purple-700 transition-colors">
-                Próximas Perguntas
-            </button>
+            <!-- NOVO: Container de botões com navegação -->
+            <div class="flex flex-col sm:flex-row justify-center gap-4 mt-6">
+                <button id="back-from-nails-question" class="bg-gray-500 text-white py-3 px-6 rounded-full font-bold shadow-lg hover:bg-gray-600 transition-colors w-full sm:w-auto">
+                    Voltar (Tamanho)
+                </button>
+                <button id="continue-to-personal-questions" class="bg-purple-600 text-white py-3 px-8 rounded-full font-bold shadow-lg hover:bg-purple-700 transition-colors w-full sm:w-auto">
+                    Próximas Perguntas
+                </button>
+            </div>
         </div>
     </div>
     <!-- Questionário Pessoal Otimizado -->
@@ -590,15 +614,21 @@
             </div>
 
             <div class="mt-8 text-center">
-                <button type="button" id="generate-final-report-button" class="bg-gradient-to-r from-purple-600 to-purple-700 text-white py-4 px-10 rounded-xl font-bold shadow-lg hover:from-purple-700 hover:to-purple-800 cursor-pointer transition-all duration-300 transform hover:scale-[1.02] inline-flex items-center">
-                    <span id="button-text">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
-                        </svg>
-                        Gerar Relatório Final
-                    </span>
-                    <span id="loading-spinner" class="hidden loading-spinner"></span>
-                </button>
+                <!-- NOVO: Container de botões com navegação -->
+                <div class="flex flex-col sm:flex-row justify-center gap-4 mb-4">
+                    <button type="button" id="back-from-personal-questions" class="bg-gray-500 text-white py-3 px-6 rounded-full font-bold shadow-lg hover:bg-gray-600 transition-colors w-full sm:w-auto">
+                        Voltar (Unhas)
+                    </button>
+                    <button type="button" id="generate-final-report-button" class="bg-gradient-to-r from-purple-600 to-purple-700 text-white py-4 px-10 rounded-xl font-bold shadow-lg hover:from-purple-700 hover:to-purple-800 cursor-pointer transition-all duration-300 transform hover:scale-[1.02] inline-flex items-center w-full sm:w-auto">
+                        <span id="button-text">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                            </svg>
+                            Gerar Relatório Final
+                        </span>
+                        <span id="loading-spinner" class="hidden loading-spinner"></span>
+                    </button>
+                </div>
                 <p id="questions-error" class="text-red-500 text-sm mt-3 hidden">Por favor, responda todas as perguntas.</p>
             </div>
         </form>
@@ -833,6 +863,13 @@
       
       const continueToShapeMeasurement = document.getElementById('continue-to-shape-measurement');
       const continueToRatioMeasurement = document.getElementById('continue-to-ratio-measurement');
+      
+      // NOVOS BOTÕES DE VOLTAR/AVANÇAR
+      const backFromShapeInstruction = document.getElementById('back-from-shape-instruction');
+      const backFromRatioInstruction = document.getElementById('back-from-ratio-instruction');
+      const backFromMeasurement = document.getElementById('back-from-measurement');
+      const backFromNailsQuestion = document.getElementById('back-from-nails-question');
+      const backFromPersonalQuestions = document.getElementById('back-from-personal-questions');
 
 
       const canvas = document.getElementById('imageCanvas');
@@ -854,6 +891,8 @@
       let facingMode = 'environment';
       let currentRotation = 0;
       let previousBlockId = 'splash-screen'; // Rastreia o bloco anterior para o botão "Voltar"
+      let currentMeasurementInstruction = 'shape-instruction-block'; // Novo: Rastreia qual instrução veio antes da medição
+
 
       // --- Elementos da Câmera ---
       // const openCameraButton = document.getElementById('open-camera-button'); // DESATIVADO NO FLUXO NATIVO
@@ -1194,13 +1233,13 @@
 
           if (isMobile) {
               // Em dispositivos móveis, mostra o botão "Tirar Foto" e esconde a mensagem de erro desktop.
-              openCameraButtonLabel.classList.remove('hidden');
-              cameraError.classList.add('hidden');
+              if (openCameraButtonLabel) openCameraButtonLabel.classList.remove('hidden');
+              if (cameraError) cameraError.classList.add('hidden');
           } else {
               // No desktop, esconde o botão "Tirar Foto" e mostra a mensagem para usar o Upload.
-              openCameraButtonLabel.classList.add('hidden');
-              cameraError.classList.remove('hidden');
-              cameraError.textContent = 'A função "Tirar Foto" está disponível apenas em dispositivos móveis. Por favor, use o botão "Fazer Upload" no computador.';
+              if (openCameraButtonLabel) openCameraButtonLabel.classList.add('hidden');
+              if (cameraError) cameraError.classList.remove('hidden');
+              if (cameraError) cameraError.textContent = 'A função "Tirar Foto" está disponível apenas em dispositivos móveis. Por favor, use o botão "Fazer Upload" no computador.';
           }
       }
 
@@ -1426,7 +1465,20 @@
       }
       
       function startRatioAnalysis() { currentAnalysisPhase = 'ratio'; points = []; currentStep = 1; showBlock(ratioInstructionBlock); }
-      function startShapeAnalysis() { currentAnalysisPhase = 'shape'; points = []; currentStep = 1; showBlock(shapeInstructionBlock); }
+      function startShapeAnalysis(imageOverrideUrl = imageUrl) { 
+          currentAnalysisPhase = 'shape'; 
+          points = []; 
+          currentStep = 1; 
+          
+          // Força o carregamento da imagem de pré-visualização, caso não tenha sido feito pelo onload
+          img.onload = () => {
+              // Mantém o tamanho do canvas com base no onload do processImageAndContinue
+              showBlock(shapeInstructionBlock); 
+              // A próxima tela será a de medição, mas mostramos a instrução primeiro.
+          };
+          img.src = imageOverrideUrl;
+      }
+
       
       // --- Event Listeners ---
       if(startButton) startButton.addEventListener('click', () => { 
@@ -1511,13 +1563,26 @@
       if(calculateButton) calculateButton.addEventListener('click', calculateAndDisplayResult);
       if(redoButton) redoButton.addEventListener('click', resetMeasurement);
       if(continueToShapeMeasurement) continueToShapeMeasurement.addEventListener('click', () => { showBlock(measurementBlock); drawCanvas(); updateUI(); });
-      if(analyzeRatioButton) analyzeRatioButton.addEventListener('click', startRatioAnalysis);
+      if(analyzeRatioButton) analyzeRatioButton.addEventListener('click', () => { 
+          startRatioAnalysis(); 
+          currentMeasurementInstruction = 'ratio-instruction-block'; // Define instrução para o passo de medição
+      });
       // CORREÇÃO: Alterado 'continueToToRatioMeasurement' para 'continueToRatioMeasurement'
       if(continueToRatioMeasurement) continueToRatioMeasurement.addEventListener('click', () => { showBlock(measurementBlock); drawCanvas(); updateUI(); });
       if(backToShapeMeasurementButton) backToShapeMeasurementButton.addEventListener('click', resetMeasurement); 
       if(backToRatioMeasurementButton) backToRatioMeasurementButton.addEventListener('click', resetMeasurement);
-      if(newRatioAnalysisButton) newRatioAnalysisButton.addEventListener('click', () => { if (!ratioResultText) { return showBlock(ratioResultBlock); } document.getElementById('nails-result-image').src = imageUrl; showBlock(nailsQuestionBlock); });
-      if(continueToPersonalQuestions) continueToPersonalQuestions.addEventListener('click', () => { const unhas = document.querySelector('input[name="nails-visibility"]:checked'); if (!unhas) { return document.getElementById('nails-error').classList.remove('hidden'); } document.getElementById('nails-error').classList.add('hidden'); personalAnswers.unhas = unhas.value; showBlock(personalQuestionsBlock); });
+      if(newRatioAnalysisButton) newRatioAnalysisButton.addEventListener('click', () => { 
+          if (!ratioResultText) { return showBlock(ratioResultBlock); } 
+          document.getElementById('nails-result-image').src = imageUrl; 
+          showBlock(nailsQuestionBlock); 
+      });
+      if(continueToPersonalQuestions) continueToPersonalQuestions.addEventListener('click', () => { 
+          const unhas = document.querySelector('input[name="nails-visibility"]:checked'); 
+          if (!unhas) { return document.getElementById('nails-error').classList.remove('hidden'); } 
+          document.getElementById('nails-error').classList.add('hidden'); 
+          personalAnswers.unhas = unhas.value; 
+          showBlock(personalQuestionsBlock); 
+      });
       
       // Listener do Relatório Final (Atualizado para 4 perguntas)
       if(generateFinalReportButton) generateFinalReportButton.addEventListener('click', () => {
@@ -1588,30 +1653,53 @@
             currentRotation = 0;
             photoPreview.style.transform = 'rotate(0deg)';
             startShapeAnalysis(rotatedImageData); // Inicia a análise com a imagem processada
+            // Adicionado: Define a próxima instrução
+            currentMeasurementInstruction = 'shape-instruction-block';
           };
           
           tempImg.src = photoPreview.src;
         } else {
           startShapeAnalysis(photoPreview.src); // Inicia a análise com a imagem original
+          // Adicionado: Define a próxima instrução
+          currentMeasurementInstruction = 'shape-instruction-block';
         }
       });
       
-      // Correção na função startShapeAnalysis para usar a imagem do parâmetro (se houver)
-      function startShapeAnalysis(imageOverrideUrl = imageUrl) { 
+      // --- Listeners de Navegação (Novos) ---
+      
+      // Voltar do Bloco de Instruções de Formato -> Preview Block
+      if(backFromShapeInstruction) backFromShapeInstruction.addEventListener('click', () => {
+          showBlock(previewBlock);
+      });
+      
+      // Voltar do Bloco de Instruções de Razão -> Resultado de Formato
+      if(backFromRatioInstruction) backFromRatioInstruction.addEventListener('click', () => {
+          // Garante que a etapa seja resetada, caso o usuário volte
           currentAnalysisPhase = 'shape'; 
           points = []; 
-          currentStep = 1; 
-          
-          // Força o carregamento da imagem de pré-visualização, caso não tenha sido feito pelo onload
-          img.onload = () => {
-              // Mantém o tamanho do canvas com base no onload do processImageAndContinue
-              showBlock(shapeInstructionBlock); 
-              // A próxima tela será a de medição, mas mostramos a instrução primeiro.
-          };
-          img.src = imageOverrideUrl;
-      }
+          currentStep = 1;
+          showBlock(shapeResultBlock);
+      });
       
-
+      // Voltar do Bloco de Medição -> Bloco de Instruções (dependendo da fase)
+      if(backFromMeasurement) backFromMeasurement.addEventListener('click', () => {
+          if (currentAnalysisPhase === 'shape') {
+              showBlock(shapeInstructionBlock);
+          } else {
+              showBlock(ratioInstructionBlock);
+          }
+      });
+      
+      // Voltar do Bloco de Perguntas de Unhas -> Resultado de Razão
+      if(backFromNailsQuestion) backFromNailsQuestion.addEventListener('click', () => {
+          showBlock(ratioResultBlock);
+      });
+      
+      // Voltar do Bloco de Perguntas Pessoais -> Perguntas de Unhas
+      if(backFromPersonalQuestions) backFromPersonalQuestions.addEventListener('click', () => {
+          showBlock(nailsQuestionBlock);
+      });
+      
       // Listeners de Ações Finais
       const saveAnalysisButton = document.getElementById('save-analysis-button');
       const shareAnalysisButton = document.getElementById('share-analysis-button');
@@ -1622,9 +1710,9 @@
         const filename = `Analise_dos_Pes_de_${targetName.replace(/\s+/g, '_')}.pdf`;
 
         // 1. Loading state and disabled buttons
-        saveAnalysisButton.textContent = 'Salvando...';
-        saveAnalysisButton.disabled = true;
-        shareAnalysisButton.disabled = true;
+        if (saveAnalysisButton) saveAnalysisButton.textContent = 'Salvando...';
+        if (saveAnalysisButton) saveAnalysisButton.disabled = true;
+        if (shareAnalysisButton) shareAnalysisButton.disabled = true;
 
         // ** Armazenar o estado original e reposicionamento temporário **
         const originalParent = reportElement.parentNode;
@@ -1725,9 +1813,9 @@
             appMainContent.style.display = originalAppMainDisplay;
 
             // 6. Restaura os botões de controle de análise
-            saveAnalysisButton.textContent = 'Salvar Relatório';
-            saveAnalysisButton.disabled = false;
-            shareAnalysisButton.disabled = false;
+            if (saveAnalysisButton) saveAnalysisButton.textContent = 'Salvar Relatório';
+            if (saveAnalysisButton) saveAnalysisButton.disabled = false;
+            if (shareAnalysisButton) shareAnalysisButton.disabled = false;
         }
       }
 
