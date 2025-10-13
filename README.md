@@ -79,6 +79,8 @@ A integração segue o modelo oficial recomendado pelo Google:
 <meta name="google-adsense-account" content="ca-pub-2957847231347233">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2957847231347233" crossorigin="anonymous"></script>
 
+---
+
 ## 9. Contato
 
 Desenvolvedor: Irmo Zuccato Neto
@@ -89,7 +91,9 @@ Local: Campinas - SP, Brasil
 Para informações, parcerias ou solicitações, entre em contato pelo site oficial ou perfil no GitHub:
 https://github.com/irmoneto
 
-10. Última Atualização
+---
+
+## 10. Última Atualização
 
 Outubro de 2025
 Versão do aplicativo: v1.0 – “Análise Visual e Relatório Integrado”
