@@ -82,7 +82,7 @@ A integração segue o modelo oficial recomendado pelo Google:
 
 ---
 
-## 9. Contato
+**## 9. Contato**
 
 Desenvolvedor: Irmo Zuccato Neto
 Função: Advogado e Terapeuta
@@ -94,7 +94,7 @@ https://github.com/irmoneto
 
 ---
 
-## 10. Última Atualização
+**## 10. Última Atualização**
 
 Outubro de 2025
 Versão do aplicativo: v1.0 – “Análise Visual e Relatório Integrado”
