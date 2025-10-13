@@ -30,3 +30,5 @@ Este projeto está sob licença MIT. Veja o arquivo LICENSE para detalhes.
 
 ## 📞 Contato
 Para dúvidas ou colaborações: irmoneto@terra.com.br
+
+“Conteúdo informativo, não substitui aconselhamento profissional”.
