@@ -1109,23 +1109,25 @@
                `;
           }
 
-
-          let report = `<p class="mb-2"><strong>${clientName}</strong>, seus pés revelam muito sobre como você pensa, sente e age no mundo. Enquanto a mente racionaliza, os pés simplesmente mostram a verdade. Vamos juntos entender essa linguagem silenciosa?</p>`;
+          // CORREÇÃO: Removendo o <p class="mb-2"> inicial (linha 1152) para diminuir o espaçamento do topo.
+          let report = `
+          <p><strong>${clientName}</strong>, seus pés revelam muito sobre como você pensa, sente e age no mundo. Enquanto a mente racionaliza, os pés simplesmente mostram a verdade. Vamos juntos entender essa linguagem silenciosa?</p>`;
           
           // Formato do Pé (PÁGINA 2, PARTE 1)
-          report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Formato do Pé</h4><p class="mt-1">Seu formato de pé <strong>${shape}</strong> traz a primeira pista sobre sua estrutura de pensamento, com tendência a <em>${shapeDesc}</em></p><p class="mt-1 text-gray-600 italic text-sm">Isso não é certo nem errado — é seu jeito único de organizar e interagir com o mundo.</p></div>`;
+          // CORREÇÃO: Usando 'mt-3' para dar um respiro, mas menos que o 'mt-2' anterior para agrupar.
+          report += `<div class="mt-3"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Formato do Pé</h4><p class="mt-1">Seu formato de pé <strong>${shape}</strong> traz a primeira pista sobre sua estrutura de pensamento, com tendência a <em>${shapeDesc}</em></p><p class="mt-1 text-gray-600 italic text-sm">Isso não é certo nem errado — é seu jeito único de organizar e interagir com o mundo.</p></div>`;
           
           // Tamanho dos Dedos 
-          report += `<div class="mt-2"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Tamanho dos Dedos</h4><p class="mt-1">Já seus dedos <strong>${ratioKey}</strong> revelam sua tendência inata para <em>${ratioDesc}</em></p><p class="mt-1 text-gray-600 italic text-sm">Sua força está justamente nessa forma de processar a vida. O convite é dançar no ritmo que equilibre sentir, pensar e agir — um pouco melhor a cada dia.</p></div>`;
+          report += `<div class="mt-3"><h4 class="text-lg font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Tamanho dos Dedos</h4><p class="mt-1">Já seus dedos <strong>${ratioKey}</strong> revelam sua tendência inata para <em>${ratioDesc}</em></p><p class="mt-1 text-gray-600 italic text-sm">Sua força está justamente nessa forma de processar a vida. O convite é dançar no ritmo que equilibre sentir, pensar e agir — um pouco melhor a cada dia.</p></div>`;
           
           // Tamanho das Unhas
-          report += `<div class="mt-1"><h4 class="text-base font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Tamanho das Unhas</h4><p class="mt-1 text-sm">Suas unhas <strong>${nailsKey}</strong> mostram como você constrói e lida com suas verdades, geralmente, <em>${nailsDesc}</em></p><p class="mt-1 text-gray-600 italic text-xs">Esse é seu ponto de equilíbrio entre o tradicional e o novo. Toda crença é um abrigo, mas vira prisão se não tiver portas abertas.</p></div>`;
+          report += `<div class="mt-3"><h4 class="text-base font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Tamanho das Unhas</h4><p class="mt-1 text-sm">Suas unhas <strong>${nailsKey}</strong> mostram como você constrói e lida com suas verdades, geralmente, <em>${nailsDesc}</em></p><p class="mt-1 text-gray-600 italic text-xs">Esse é seu ponto de equilíbrio entre o tradicional e o novo. Toda crença é um abrigo, mas vira prisão se não tiver portas abertas.</p></div>`;
           
           // Joanetes e Calos
-          report += `<div class="mt-1"><h4 class="text-base font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Joanetes e Calos</h4>${joanetesCalosBlock}</div>`; 
+          report += `<div class="mt-3"><h4 class="text-base font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Joanetes e Calos</h4>${joanetesCalosBlock}</div>`; 
 
           // Sensibilidade e Relação com o Corpo
-          report += `<div class="mt-1"><h4 class="text-base font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Sensibilidade e Relação com o Corpo</h4>`;
+          report += `<div class="mt-3"><h4 class="text-base font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Sensibilidade e Relação com o Corpo</h4>`;
           if (tickles === 'Sim') {
             let ticklesClean = (analysisData['Cócegas nos Pés'][tickles] || '').replace(/Indicam um/i, '').trim();
             report += `<p class="mt-1 text-sm">A sensibilidade quanto às cócegas é um sinal refinado que <em>${formatText(lowerCaseFirst(ticklesClean))}</em></p>`;
@@ -1137,10 +1139,10 @@
           report += `<p class="mt-1 text-gray-600 italic text-xs">Quando há desconforto, há um convite para o autoconhecimento, pois o corpo é o palco onde a psique e o espírito se encontram.</p></div>`;
           
           // Pontos Fortes e Desafiadores
-          report += `<div class="mt-1"><h4 class="text-base font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Pontos Fortes e Desafiadores</h4><p class="mt-1 text-sm">Seus <strong>pontos fortes</strong> — <em>${strongPointsDesc}</em> — não são só talentos; são sabedoria já instalada.</p><p class="mt-1 text-sm">O segredo não é lutar contra suas dificuldades, mas usar essa base como trampolim para lidar com seus <strong>pontos desafiadores</strong>${challengingPointsFormatted}.</p></div>`;
+          report += `<div class="mt-3"><h4 class="text-base font-bold text-gray-800 mb-1 pb-1 border-b border-gray-200">Pontos Fortes e Desafiadores</h4><p class="mt-1 text-sm">Seus <strong>pontos fortes</strong> — <em>${strongPointsDesc}</em> — não são só talentos; são sabedoria já instalada.</p><p class="mt-1 text-sm">O segredo não é lutar contra suas dificuldades, mas usar essa base como trampolim para lidar com seus <strong>pontos desafiadores</strong>${challengingPointsFormatted}.</p></div>`;
           
           // Conclusão
-          report += `<div class="mt-2 pt-2 border-t-2 border-green-200"><p class="font-semibold text-gray-700 text-xs">Sabia que a fórmula está no equilíbrio entre ação, emoção e pensamento? Mais uma coisa, use seu instinto não como alarme, mas como radar para a beleza e verdades ainda escondidas.</p><p class="mt-1 text-gray-600 italic text-xs">E lembre-se sempre que puder, que você não é uma máquina, é um organismo pulsante e a vida quer fluir através de você, sem bloqueios. A compreensão sobre si é o primeiro passo para a transformação real, afinal, levar a vida a sério demais é o verdadeiro pecado contra o viver a vida e compreender como você pensa, sente e age não é só uma jornada, é a jornada mais extraordinária de todas!</p></div>`;
+          report += `<div class="mt-4 pt-2 border-t-2 border-green-200"><p class="font-semibold text-gray-700 text-xs">Sabia que a fórmula está no equilíbrio entre ação, emoção e pensamento? Mais uma coisa, use seu instinto não como alarme, mas como radar para a beleza e verdades ainda escondidas.</p><p class="mt-1 text-gray-600 italic text-xs">E lembre-se sempre que puder, que você não é uma máquina, é um organismo pulsante e a vida quer fluir através de você, sem bloqueios. A compreensão sobre si é o primeiro passo para a transformação real, afinal, levar a vida a sério demais é o verdadeiro pecado contra o viver a vida e compreender como você pensa, sente e age não é só uma jornada, é a jornada mais extraordinária de todas!</p></div>`;
           
           report += `<p class="mt-2 text-right text-xs">Fraternos Abraços!<br><strong>Irmo Zuccato Neto</strong></p>`;
           return report;
@@ -1154,6 +1156,45 @@
             cameraPreview.srcObject = null; // Limpa a referência do vídeo
             cameraPreview.pause(); // Pausa o vídeo
         }
+      }
+      
+      // FUNÇÃO PARA AJUSTAR AS DIMENSÕES DO CANVAS (MOVIMENTO DO CÓDIGO ANTERIOR)
+      function adjustCanvasDimensions(imageElement) {
+          // Pega a largura do contêiner pai para garantir que a largura seja medida corretamente (100% da área)
+          const containerDiv = measurementBlock.querySelector('.relative');
+          if (!containerDiv) {
+              console.error("Contêiner do canvas não encontrado.");
+              return;
+          }
+          
+          // Pega a largura real do contêiner onde o canvas está inserido
+          // Usa getBoundingClientRect().width para garantir que pegamos a largura visível após o display:block
+          const maxWidth = containerDiv.getBoundingClientRect().width; 
+          
+          let originalWidth = imageElement.width;
+          let originalHeight = imageElement.height;
+          
+          if (originalWidth === 0 || originalHeight === 0) {
+              console.warn("Dimensões da imagem não carregadas corretamente.");
+              return;
+          }
+
+          const aspectRatio = originalWidth / originalHeight;
+          
+          // Calcula a nova altura para preencher a largura disponível mantendo a proporção
+          const newWidth = maxWidth;
+          const newHeight = maxWidth / aspectRatio;
+          
+          // Define as dimensões internas do canvas (onde o desenho ocorre)
+          canvas.width = newWidth;
+          canvas.height = newHeight;
+
+          // Se as dimensões internas do canvas forem 0 ou NaN, tentamos reverter para um fallback.
+          if (canvas.width === 0 || isNaN(canvas.width)) {
+              console.error("A largura do canvas resultou em 0 ou NaN.");
+              canvas.width = 300; // Valor fixo de fallback
+              canvas.height = 300 / aspectRatio; 
+          }
       }
       
       function showBlock(blockToShow) {
@@ -1378,7 +1419,10 @@
           let targetName = (document.getElementById('analysis-target-select').value === 'client' ? clientName : userName);
           targetName = targetName.charAt(0).toUpperCase() + targetName.slice(1);
           document.getElementById('report-target-name').textContent = targetName;
-          document.getElementById('final-report-image').src = imageUrl;
+          
+          // CORREÇÃO APLICADA AQUI: Garante que a imagem final do relatório seja a URL mais recente (rotacionada)
+          document.getElementById('final-report-image').src = imageUrl; 
+          
           document.getElementById('summary-shape').textContent = shapeResultText;
           document.getElementById('summary-ratio').textContent = ratioResultText;
           const displayNailsMap = { 'pouco-visiveis': 'Pouco Visíveis', 'visiveis': 'Visíveis', 'bem-visiveis': 'Bem Visíveis' };
@@ -1562,13 +1606,33 @@
       });
       if(calculateButton) calculateButton.addEventListener('click', calculateAndDisplayResult);
       if(redoButton) redoButton.addEventListener('click', resetMeasurement);
-      if(continueToShapeMeasurement) continueToShapeMeasurement.addEventListener('click', () => { showBlock(measurementBlock); drawCanvas(); updateUI(); });
+      
+      // CORREÇÃO APLICADA AQUI: Aumentar o tempo de espera no setTimeout para garantir que o bloco esteja visível
+      if(continueToShapeMeasurement) continueToShapeMeasurement.addEventListener('click', () => { 
+          showBlock(measurementBlock); 
+          // Aguarda um ciclo para garantir que o measurementBlock tenha as dimensões corretas na tela
+          setTimeout(() => {
+              adjustCanvasDimensions(img);
+              drawCanvas(); 
+              updateUI(); 
+          }, 400); // FIX: Aumentado o atraso para 400ms
+      });
+      
       if(analyzeRatioButton) analyzeRatioButton.addEventListener('click', () => { 
           startRatioAnalysis(); 
           currentMeasurementInstruction = 'ratio-instruction-block'; // Define instrução para o passo de medição
       });
-      // CORREÇÃO: Alterado 'continueToToRatioMeasurement' para 'continueToRatioMeasurement'
-      if(continueToRatioMeasurement) continueToRatioMeasurement.addEventListener('click', () => { showBlock(measurementBlock); drawCanvas(); updateUI(); });
+      // CORREÇÃO APLICADA AQUI: Aumentar o tempo de espera no setTimeout para garantir que o bloco esteja visível
+      if(continueToRatioMeasurement) continueToRatioMeasurement.addEventListener('click', () => { 
+          showBlock(measurementBlock); 
+          // Aguarda um ciclo para garantir que o measurementBlock tenha as dimensões corretas na tela
+          setTimeout(() => {
+              adjustCanvasDimensions(img);
+              drawCanvas(); 
+              updateUI(); 
+          }, 400); // FIX: Aumentado o atraso para 400ms
+      });
+      
       if(backToShapeMeasurementButton) backToShapeMeasurementButton.addEventListener('click', resetMeasurement); 
       if(backToRatioMeasurementButton) backToRatioMeasurementButton.addEventListener('click', resetMeasurement);
       if(newRatioAnalysisButton) newRatioAnalysisButton.addEventListener('click', () => { 
@@ -1649,9 +1713,15 @@
             tempCtx.drawImage(tempImg, -tempImg.width / 2, -tempImg.height / 2);
             
             // Processa a imagem rotacionada
-            const rotatedImageData = tempCanvas.toDataURL('image/jpeg', 0.9);
+            // CORREÇÃO APLICADA AQUI: Aumentar a qualidade para 1.0 para manter a melhor fidelidade da imagem
+            const rotatedImageData = tempCanvas.toDataURL('image/jpeg', 1.0); 
+            
             currentRotation = 0;
             photoPreview.style.transform = 'rotate(0deg)';
+            
+            // ATUALIZAÇÃO CHAVE: AQUI GARANTIMOS QUE A IMAGEM ROTACIONADA ESTÁ NA VARIÁVEL GLOBAL
+            imageUrl = rotatedImageData; 
+            
             startShapeAnalysis(rotatedImageData); // Inicia a análise com a imagem processada
             // Adicionado: Define a próxima instrução
             currentMeasurementInstruction = 'shape-instruction-block';
@@ -1659,7 +1729,8 @@
           
           tempImg.src = photoPreview.src;
         } else {
-          startShapeAnalysis(photoPreview.src); // Inicia a análise com a imagem original
+          // A imagem já está correta na URL global, apenas avança
+          startShapeAnalysis(photoPreview.src); 
           // Adicionado: Define a próxima instrução
           currentMeasurementInstruction = 'shape-instruction-block';
         }
