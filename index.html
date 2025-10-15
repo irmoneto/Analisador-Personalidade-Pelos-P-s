@@ -1299,10 +1299,10 @@
       }
 
       function isEgyptianHarmonic(L1, L2, L3, L5) {
-          // REQUISITO DO USUÁRIO: Dedão (L1) deve ser dominante em pelo menos 2.5% sobre o segundo dedo (L2).
-          // Para o Egípcio, o Dedão (L1) deve ser o dominante, e L1 > L2 * 1.025 é a regra principal.
+          // REQUISITO DO USUÁRIO: Dedão (L1) deve ser dominante em pelo menos 4.5% sobre o segundo dedo (L2).
+          // Para o Egípcio, o Dedão (L1) deve ser o dominante, e L1 > L2 * 1.045 é a regra principal.
           // L1 > L5 também é um indicador importante da forma geral.
-          if (L1 > L2 * 1.025 && L1 > L5) { // <-- VALOR ALTERADO DE 1.07 PARA 1.025
+          if (L1 > L2 * 1.045 && L1 > L5) { // <-- VALOR ALTERADO DE 1.07 PARA 1.045
               // Verifica se a proporção de caída é "consistente" (não precisa ser harmônica estrita)
               // Verifica se a diferença entre o declínio L1->L2 e L2->L3 não é excessivamente grande
               const d1 = L1 - L2;
@@ -1314,7 +1314,7 @@
               if (L1 > L2 * 1.2 && L1 > L5 * 1.2) {
                    return true;
               }
-              // Se a regra principal (L1 > L2 * 1.025 e L1 > L5) for atendida, retorna true,
+              // Se a regra principal (L1 > L2 * 1.045 e L1 > L5) for atendida, retorna true,
               // cobrindo o requisito base do usuário.
               return true;
           }
