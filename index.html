@@ -1299,11 +1299,10 @@
       }
 
       function isEgyptianHarmonic(L1, L2, L3, L5) {
-          // Lógica anterior (que você pediu para restaurar, mas ajustei para aceitar o caso L1=57, L2=37, L5=44)
-          // O L5 ser maior que L3 ou L2 (como no caso do Grego/Romano) quebrava o isEgyptianHarmonic.
-          // Para o Egípcio, o Dedão (L1) deve ser o dominante, e L1 > L2 é a regra principal.
-          // Permite que L5 seja mais longo que L3 (o que é comum) mas prioriza a dominância de L1
-          if (L1 > L2 * 1.07 && L1 > L5) {
+          // REQUISITO DO USUÁRIO: Dedão (L1) deve ser dominante em pelo menos 2.5% sobre o segundo dedo (L2).
+          // Para o Egípcio, o Dedão (L1) deve ser o dominante, e L1 > L2 * 1.025 é a regra principal.
+          // L1 > L5 também é um indicador importante da forma geral.
+          if (L1 > L2 * 1.025 && L1 > L5) { // <-- VALOR ALTERADO DE 1.07 PARA 1.025
               // Verifica se a proporção de caída é "consistente" (não precisa ser harmônica estrita)
               // Verifica se a diferença entre o declínio L1->L2 e L2->L3 não é excessivamente grande
               const d1 = L1 - L2;
@@ -1315,6 +1314,9 @@
               if (L1 > L2 * 1.2 && L1 > L5 * 1.2) {
                    return true;
               }
+              // Se a regra principal (L1 > L2 * 1.025 e L1 > L5) for atendida, retorna true,
+              // cobrindo o requisito base do usuário.
+              return true;
           }
           return false;
       }
@@ -1327,8 +1329,8 @@
           const range = max - min;
           const avg = (L1 + L2 + L3) / 3;
           
-          // Se a variação entre os 3 primeiros dedos for pequena (ex: menos de 8% do dedo mais curto)
-          if (range / min <= 0.08) return true;
+          // REQUISITO DO USUÁRIO: Se a variação entre os 3 primeiros dedos for no máximo 3% do dedo mais curto
+          if (range / min <= 0.03) return true; // <-- VALOR ALTERADO DE 0.08 PARA 0.03
 
           // Se L2 é o mais longo e L1 e L3 são similares (muito comum em Quadrado-Grego)
           if (L2 > L1 && L2 > L3 && Math.abs(L1 - L3) / Math.min(L1, L3, 1) < 0.15) return true;
